@@ -7,7 +7,7 @@ namespace Wellness.WinForms.WellnessPrompt
     {
         private readonly string _rootDir;
         private List<Category>? _categories;
-        private const int TimerInterval = 10 * 1000; // 30 * 60 * 1000;
+        private const int TimerInterval = 30 * 60 * 1000;
         private readonly System.Threading.Timer _timer;
 
         public WellnessPromptForm(string folder, int? timerInterval = null)
