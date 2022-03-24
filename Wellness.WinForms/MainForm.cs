@@ -14,7 +14,8 @@ namespace Wellness.WinForms
 
             var folder = ConfigurationManager.AppSettings["ActiveWindowTitleLogger_LogFolder"];
             vm = new ActiveWindowTitleLogger(folder!);
-            prompt = new WellnessPromptForm(folder!);
+            var parsed = Int32.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
+            prompt = new WellnessPromptForm(folder!, parsed ? timerInterval : null);
             prompt.Show();
 
             RefreshAddresses();

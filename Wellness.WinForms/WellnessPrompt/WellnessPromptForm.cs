@@ -10,7 +10,7 @@ namespace Wellness.WinForms.WellnessPrompt
         private const int TimerInterval = 10 * 1000; // 30 * 60 * 1000;
         private readonly System.Threading.Timer _timer;
 
-        public WellnessPromptForm(string folder)
+        public WellnessPromptForm(string folder, int? timerInterval = null)
         {
             InitializeComponent();
 
@@ -25,14 +25,14 @@ namespace Wellness.WinForms.WellnessPrompt
             }
 
             _timer = new System.Threading.Timer(Timer_Tick);
-            _timer.Change(TimerInterval, Timeout.Infinite);
+            var interval = timerInterval.HasValue ? timerInterval.Value * 60 * 1000: TimerInterval;
+            _timer.Change(interval, Timeout.Infinite);
         }
         
 
         public void ShowIt()
         {
-            if (IsHandleCreated)
-                Invoke(Show);
+            Invoke(Show);
         }
 
         private void Timer_Tick(object? state)
@@ -40,9 +40,26 @@ namespace Wellness.WinForms.WellnessPrompt
             ShowIt();
         }
 
-        private void WellnessPromptForm_Closed(object sender, EventArgs e)
+        private void WellnessPromptForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            e.Cancel = true;
+
+            txtBoxMisc.Text = txtDoing.Text = "";
+            foreach (var grp in grpBoxFeelings.Controls)
+            {
+                var grpBox = grp as GroupBox;
+                if (grpBox == null) continue;
+                foreach (var chk in grpBox.Controls)
+                {
+                    var chkBox = chk as CheckBox;
+                    if (chkBox == null) continue;
+                    chkBox.Checked = false;
+                }
+            }
+            
             _timer.Change(TimerInterval, Timeout.Infinite);
+
+            Hide();
         }
 
         private void WellnessPromptForm_Load(object sender, EventArgs e)
@@ -83,7 +100,7 @@ namespace Wellness.WinForms.WellnessPrompt
                 groupBox.TabStop = false;
                 groupBox.Text = category.Name;
                 //groupBox.Location = new Point(grpLeft, grpStart);
-                groupBox.Dock = DockStyle.Top;
+                groupBox.Dock = DockStyle.Bottom;
 
                 var i = 0;
                 var rowNumber = category.Items.Count / maxFeelingsPerRow + 1;
@@ -126,6 +143,7 @@ namespace Wellness.WinForms.WellnessPrompt
 
             var line = $"{time} '{json}'";
             WriteToFile($"{date}_feelings.txt", line);
+            Close();
         }
 
         private Checkin GetFeelings()
@@ -162,32 +180,6 @@ namespace Wellness.WinForms.WellnessPrompt
 
             using var writer = new StreamWriter(path, true);
             writer.WriteLine(what);
-        }
-
-        class Checkin
-        {
-            public Checkin(string doing, string miscellaneous, List<FeelingType> feelings)
-            {
-                Doing = doing;
-                Miscellaneous = miscellaneous;
-                Feelings = feelings;
-            }
-
-            public string Doing { get; set; }
-            public string Miscellaneous { get; set; }
-            public List<FeelingType> Feelings { get; set; }
-        }
-
-        class FeelingType
-        {
-            public FeelingType(string name, List<string> feelings)
-            {
-                Name = name;
-                Feelings = feelings;
-            }
-
-            public string Name { get; set; }
-            public List<string> Feelings { get; set; }
         }
     }
 }

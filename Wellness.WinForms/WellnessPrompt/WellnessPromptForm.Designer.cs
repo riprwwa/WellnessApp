@@ -1,4 +1,6 @@
-﻿namespace Wellness.WinForms.WellnessPrompt
+﻿using System.Windows.Forms;
+
+namespace Wellness.WinForms.WellnessPrompt
 {
     partial class WellnessPromptForm
     {
@@ -128,8 +130,8 @@
             this.Name = "WellnessPromptForm";
             this.Padding = new System.Windows.Forms.Padding(4);
             this.Text = "WellnessPromptForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WellnessPromptForm_FormClosing);
             this.Load += new System.EventHandler(this.WellnessPromptForm_Load);
-            this.Closed += new System.EventHandler(this.WellnessPromptForm_Closed);
             this.grpBoxDoing.ResumeLayout(false);
             this.grpBoxDoing.PerformLayout();
             this.grpBoxMisc.ResumeLayout(false);
