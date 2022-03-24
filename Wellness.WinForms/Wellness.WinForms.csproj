@@ -7,6 +7,26 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>WellnessApp</AssemblyName>
+    <StartupObject>Wellness.WinForms.Program</StartupObject>
+    <ApplicationIcon>wellness.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="feelings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wellness.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="feelings.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
 
 </Project>

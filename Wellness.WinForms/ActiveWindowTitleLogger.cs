@@ -59,7 +59,13 @@ namespace Wellness.WinForms
             _previousTime = now;
             _previousTitle = windowTitle!;
             
-            var path = Path.Combine(_rootDir, $"{date}.txt");
+            var line = $"{time} ({difference}) {windowTitle}";
+            WriteToFile($"{date}_tracking.txt", line);
+        }
+
+        private void WriteToFile(string name, string what)
+        {
+            var path = Path.Combine(_rootDir, name);
             var dir = Path.GetDirectoryName(path)!;
             if (!Directory.Exists(dir))
             {
@@ -67,8 +73,7 @@ namespace Wellness.WinForms
             }
 
             using var writer = new StreamWriter(path, true);
-            var line = $"{time} ({difference}) {windowTitle}";
-            writer.WriteLine(line);
+            writer.WriteLine(what);
         }
 
         private string TimespanToString(TimeSpan span) => $"{span.Hours:00}h{span.Minutes:00}m{span.Seconds:00}s";

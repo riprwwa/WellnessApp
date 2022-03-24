@@ -1,10 +1,12 @@
 using System.Configuration;
+using Wellness.WinForms.WellnessPrompt;
 
 namespace Wellness.WinForms
 {
     public partial class MainForm : Form
     {
         private ActiveWindowTitleLogger vm;
+        private WellnessPromptForm prompt;
 
         public MainForm()
         {
@@ -12,6 +14,8 @@ namespace Wellness.WinForms
 
             var folder = ConfigurationManager.AppSettings["ActiveWindowTitleLogger_LogFolder"];
             vm = new ActiveWindowTitleLogger(folder!);
+            prompt = new WellnessPromptForm(folder!);
+            prompt.Show();
 
             RefreshAddresses();
         }
@@ -71,7 +75,7 @@ namespace Wellness.WinForms
 
         private void chkLogActiveWindowTitle_CheckedChanged(object sender, EventArgs e)
         {
-            ToggleLoggingOfWindowTitle((sender as CheckBox).Checked);
+            ToggleLoggingOfWindowTitle((sender as CheckBox)!.Checked);
         }
 
         private void notifyIcon_DoubleClick(object sender, EventArgs e)
@@ -93,7 +97,13 @@ namespace Wellness.WinForms
             }
             catch
             {
+                // yes
             }
+        }
+
+        private void btnLaunchWellnessPrompt_Click(object sender, EventArgs e)
+        {
+            prompt.ShowIt();
         }
     }
 }

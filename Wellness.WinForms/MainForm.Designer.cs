@@ -41,9 +41,12 @@
             this.grpBoxAddresses = new System.Windows.Forms.GroupBox();
             this.lstAddresses = new System.Windows.Forms.ListBox();
             this.btnRefreshAddresses = new System.Windows.Forms.Button();
+            this.grpCheckin = new System.Windows.Forms.GroupBox();
+            this.btnLaunchWellnessPrompt = new System.Windows.Forms.Button();
             this.ctxtMenuStrip.SuspendLayout();
             this.grpBoxLogging.SuspendLayout();
             this.grpBoxAddresses.SuspendLayout();
+            this.grpCheckin.SuspendLayout();
             this.SuspendLayout();
             // 
             // notifyIcon
@@ -145,11 +148,32 @@
             this.btnRefreshAddresses.UseVisualStyleBackColor = true;
             this.btnRefreshAddresses.Click += new System.EventHandler(this.btnRefreshAddresses_Click);
             // 
+            // grpCheckin
+            // 
+            this.grpCheckin.Controls.Add(this.btnLaunchWellnessPrompt);
+            this.grpCheckin.Location = new System.Drawing.Point(10, 177);
+            this.grpCheckin.Name = "grpCheckin";
+            this.grpCheckin.Size = new System.Drawing.Size(573, 97);
+            this.grpCheckin.TabIndex = 5;
+            this.grpCheckin.TabStop = false;
+            this.grpCheckin.Text = "Wellness prompt";
+            // 
+            // btnLaunchWellnessPrompt
+            // 
+            this.btnLaunchWellnessPrompt.Location = new System.Drawing.Point(10, 22);
+            this.btnLaunchWellnessPrompt.Name = "btnLaunchWellnessPrompt";
+            this.btnLaunchWellnessPrompt.Size = new System.Drawing.Size(186, 23);
+            this.btnLaunchWellnessPrompt.TabIndex = 2;
+            this.btnLaunchWellnessPrompt.Text = "Launch Wellness Prompt";
+            this.btnLaunchWellnessPrompt.UseVisualStyleBackColor = true;
+            this.btnLaunchWellnessPrompt.Click += new System.EventHandler(this.btnLaunchWellnessPrompt_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(593, 450);
+            this.Controls.Add(this.grpCheckin);
             this.Controls.Add(this.grpBoxAddresses);
             this.Controls.Add(this.grpBoxLogging);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -161,6 +185,7 @@
             this.grpBoxLogging.ResumeLayout(false);
             this.grpBoxLogging.PerformLayout();
             this.grpBoxAddresses.ResumeLayout(false);
+            this.grpCheckin.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -178,5 +203,7 @@
         private GroupBox grpBoxAddresses;
         private ListBox lstAddresses;
         private Button btnRefreshAddresses;
+        private GroupBox grpCheckin;
+        private Button btnLaunchWellnessPrompt;
     }
 }
