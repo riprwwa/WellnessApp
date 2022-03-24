@@ -8,6 +8,7 @@ namespace Wellness.WinForms
         private const string _dateFormat = "yyyy_MM_dd";
         private const string _timeFormat = "HH:mm:ss";
         private const int TimerInterval = 10 * 1000;
+        private int _timerInterval;
         private readonly System.Threading.Timer _timer;
         private string _previousTitle = string.Empty;
         private DateTime _previousTime = DateTime.Now;
@@ -16,7 +17,7 @@ namespace Wellness.WinForms
 
         public bool IsEnabled => _isEnabled;
 
-        public ActiveWindowTitleLogger(string folder)
+        public ActiveWindowTitleLogger(string folder, int? timerInterval = null)
         {
             if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
             {
@@ -28,6 +29,7 @@ namespace Wellness.WinForms
                 _rootDir = System.Reflection.Assembly.GetEntryAssembly()!.Location;
             }
 
+            _timerInterval = timerInterval ?? TimerInterval;
             _timer = new System.Threading.Timer(Timer_Tick);
         }
 
@@ -54,12 +56,11 @@ namespace Wellness.WinForms
             var now = DateTime.Now;
             var date = now.ToString(_dateFormat);
             var time = now.ToString(_timeFormat);
-
-            var difference = TimespanToString(now - _previousTime);
+            
             _previousTime = now;
             _previousTitle = windowTitle!;
             
-            var line = $"{time} ({difference}) {windowTitle}";
+            var line = $"{time} {windowTitle}";
             WriteToFile($"{date}_tracking.txt", line);
         }
 
@@ -81,7 +82,7 @@ namespace Wellness.WinForms
         public bool TimerEnabled(bool enabled)
         {
             // if !enabled, set it to run when the world ends
-            var to = enabled ? TimerInterval : int.MaxValue;
+            var to = enabled ? _timerInterval : int.MaxValue;
             _timer.Change(to, to);
             return _isEnabled = enabled;
         }

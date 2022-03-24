@@ -13,8 +13,13 @@ namespace Wellness.WinForms
             InitializeComponent();
 
             var folder = ConfigurationManager.AppSettings["ActiveWindowTitleLogger_LogFolder"];
-            vm = new ActiveWindowTitleLogger(folder!);
-            var parsed = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
+            var parsed = int.TryParse(ConfigurationManager.AppSettings["ActiveWindowTitleLogger_TimeInteval_Seconds"],
+                out var trackingInterval);
+            if (!parsed) trackingInterval = 10;
+            parsed = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
+            
+            vm = new ActiveWindowTitleLogger(folder!, trackingInterval);
+
             prompt = new WellnessPromptForm(folder!, parsed ? timerInterval : null);
             prompt.Show();
 
