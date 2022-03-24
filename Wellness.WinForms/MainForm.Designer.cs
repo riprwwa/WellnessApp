@@ -43,6 +43,7 @@
             this.btnRefreshAddresses = new System.Windows.Forms.Button();
             this.grpCheckin = new System.Windows.Forms.GroupBox();
             this.btnLaunchWellnessPrompt = new System.Windows.Forms.Button();
+            this.showWellnessPromptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtMenuStrip.SuspendLayout();
             this.grpBoxLogging.SuspendLayout();
             this.grpBoxAddresses.SuspendLayout();
@@ -61,9 +62,10 @@
             this.ctxtMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showToolStripMenuItem,
             this.toggleWindowTitleLoggingToolStripMenuItem,
+            this.showWellnessPromptToolStripMenuItem,
             this.quitToolStripMenuItem});
             this.ctxtMenuStrip.Name = "ctxtMenuStrip";
-            this.ctxtMenuStrip.Size = new System.Drawing.Size(245, 70);
+            this.ctxtMenuStrip.Size = new System.Drawing.Size(245, 114);
             // 
             // showToolStripMenuItem
             // 
@@ -168,6 +170,13 @@
             this.btnLaunchWellnessPrompt.UseVisualStyleBackColor = true;
             this.btnLaunchWellnessPrompt.Click += new System.EventHandler(this.btnLaunchWellnessPrompt_Click);
             // 
+            // showWellnessPromptToolStripMenuItem
+            // 
+            this.showWellnessPromptToolStripMenuItem.Name = "showWellnessPromptToolStripMenuItem";
+            this.showWellnessPromptToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.showWellnessPromptToolStripMenuItem.Text = "Show wellness prompt";
+            this.showWellnessPromptToolStripMenuItem.Click += new System.EventHandler(this.showWellnessPromptToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -205,5 +214,6 @@
         private Button btnRefreshAddresses;
         private GroupBox grpCheckin;
         private Button btnLaunchWellnessPrompt;
+        private ToolStripMenuItem showWellnessPromptToolStripMenuItem;
     }
 }

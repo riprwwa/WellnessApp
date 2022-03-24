@@ -91,7 +91,7 @@ namespace Wellness.WinForms.WellnessPrompt
             this.btnAccept.Name = "btnAccept";
             this.btnAccept.Size = new System.Drawing.Size(691, 23);
             this.btnAccept.TabIndex = 2001;
-            this.btnAccept.Text = "OK";
+            this.btnAccept.Text = "&Accept";
             this.btnAccept.UseVisualStyleBackColor = true;
             this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
             // 

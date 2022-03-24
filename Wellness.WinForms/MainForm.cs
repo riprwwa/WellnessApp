@@ -14,7 +14,7 @@ namespace Wellness.WinForms
 
             var folder = ConfigurationManager.AppSettings["ActiveWindowTitleLogger_LogFolder"];
             vm = new ActiveWindowTitleLogger(folder!);
-            var parsed = Int32.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
+            var parsed = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
             prompt = new WellnessPromptForm(folder!, parsed ? timerInterval : null);
             prompt.Show();
 
@@ -29,7 +29,8 @@ namespace Wellness.WinForms
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            ShowIt();
+            Close();
         }
 
         private void mainForm_Resize(object sender, EventArgs e)
@@ -59,7 +60,7 @@ namespace Wellness.WinForms
 
         private void toggleWindowTitleLoggingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToggleLoggingOfWindowTitle(vm.IsEnabled, true);
+            ToggleLoggingOfWindowTitle(!vm.IsEnabled, true);
         }
 
         private void ToggleLoggingOfWindowTitle(bool enabled, bool alsoUpdateCheckbox = false)
@@ -102,9 +103,19 @@ namespace Wellness.WinForms
             }
         }
 
-        private void btnLaunchWellnessPrompt_Click(object sender, EventArgs e)
+        private void LaunchWellnessPrompt()
         {
             prompt.ShowIt();
+        }
+
+        private void btnLaunchWellnessPrompt_Click(object sender, EventArgs e)
+        {
+            LaunchWellnessPrompt();
+        }
+
+        private void showWellnessPromptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LaunchWellnessPrompt();
         }
     }
 }
