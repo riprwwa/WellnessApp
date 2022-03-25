@@ -56,6 +56,7 @@
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "Wellness App";
             this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon_DoubleClick);
+            this.notifyIcon.MouseMove += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseMove);
             // 
             // ctxtMenuStrip
             // 
@@ -65,7 +66,7 @@
             this.showWellnessPromptToolStripMenuItem,
             this.quitToolStripMenuItem});
             this.ctxtMenuStrip.Name = "ctxtMenuStrip";
-            this.ctxtMenuStrip.Size = new System.Drawing.Size(245, 114);
+            this.ctxtMenuStrip.Size = new System.Drawing.Size(245, 92);
             // 
             // showToolStripMenuItem
             // 

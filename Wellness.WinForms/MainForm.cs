@@ -123,5 +123,14 @@ namespace Wellness.WinForms
         {
             LaunchWellnessPrompt();
         }
+
+        private void notifyIcon_MouseMove(object sender, MouseEventArgs e)
+        {
+            var remaining = prompt.NextShow - DateTime.Now;
+            var time = remaining.TotalMinutes > 0
+                ? remaining.ToString(@"mm\mss\s")
+                : remaining.ToString(@"ss\s");
+            notifyIcon.Text = $"{time} to next wellness check-in";
+        }
     }
 }

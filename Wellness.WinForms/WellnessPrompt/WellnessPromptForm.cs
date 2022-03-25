@@ -10,6 +10,8 @@ namespace Wellness.WinForms.WellnessPrompt
         private const int TimerInterval = 30;
         private int _timerInterval;
         private readonly System.Threading.Timer _timer;
+        
+        public DateTime NextShow { get; private set; }
 
         public WellnessPromptForm(string folder, int? timerIntervalMinutes = null)
         {
@@ -57,9 +59,9 @@ namespace Wellness.WinForms.WellnessPrompt
                     chkBox.Checked = false;
                 }
             }
-            
-            _timer.Change(_timerInterval, Timeout.Infinite);
 
+            NextShow = DateTime.Now.AddMilliseconds(_timerInterval);
+            _timer.Change(_timerInterval, Timeout.Infinite);
             Hide();
         }
 
