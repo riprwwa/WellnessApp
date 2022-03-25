@@ -34,6 +34,7 @@
             this.ctxtMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toggleWindowTitleLoggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showWellnessPromptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chkLogActiveWindowTitle = new System.Windows.Forms.CheckBox();
             this.grpBoxLogging = new System.Windows.Forms.GroupBox();
@@ -43,7 +44,6 @@
             this.btnRefreshAddresses = new System.Windows.Forms.Button();
             this.grpCheckin = new System.Windows.Forms.GroupBox();
             this.btnLaunchWellnessPrompt = new System.Windows.Forms.Button();
-            this.showWellnessPromptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtMenuStrip.SuspendLayout();
             this.grpBoxLogging.SuspendLayout();
             this.grpBoxAddresses.SuspendLayout();
@@ -80,6 +80,13 @@
             this.toggleWindowTitleLoggingToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             this.toggleWindowTitleLoggingToolStripMenuItem.Text = "Start logging active window title";
             this.toggleWindowTitleLoggingToolStripMenuItem.Click += new System.EventHandler(this.toggleWindowTitleLoggingToolStripMenuItem_Click);
+            // 
+            // showWellnessPromptToolStripMenuItem
+            // 
+            this.showWellnessPromptToolStripMenuItem.Name = "showWellnessPromptToolStripMenuItem";
+            this.showWellnessPromptToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.showWellnessPromptToolStripMenuItem.Text = "Show wellness prompt";
+            this.showWellnessPromptToolStripMenuItem.Click += new System.EventHandler(this.showWellnessPromptToolStripMenuItem_Click);
             // 
             // quitToolStripMenuItem
             // 
@@ -169,13 +176,6 @@
             this.btnLaunchWellnessPrompt.Text = "Launch Wellness Prompt";
             this.btnLaunchWellnessPrompt.UseVisualStyleBackColor = true;
             this.btnLaunchWellnessPrompt.Click += new System.EventHandler(this.btnLaunchWellnessPrompt_Click);
-            // 
-            // showWellnessPromptToolStripMenuItem
-            // 
-            this.showWellnessPromptToolStripMenuItem.Name = "showWellnessPromptToolStripMenuItem";
-            this.showWellnessPromptToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.showWellnessPromptToolStripMenuItem.Text = "Show wellness prompt";
-            this.showWellnessPromptToolStripMenuItem.Click += new System.EventHandler(this.showWellnessPromptToolStripMenuItem_Click);
             // 
             // MainForm
             // 

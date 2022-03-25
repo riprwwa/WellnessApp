@@ -7,10 +7,11 @@ namespace Wellness.WinForms.WellnessPrompt
     {
         private readonly string _rootDir;
         private List<Category>? _categories;
-        private const int TimerInterval = 30 * 60 * 1000;
+        private const int TimerInterval = 30;
+        private int _timerInterval;
         private readonly System.Threading.Timer _timer;
 
-        public WellnessPromptForm(string folder, int? timerInterval = null)
+        public WellnessPromptForm(string folder, int? timerIntervalMinutes = null)
         {
             InitializeComponent();
 
@@ -25,8 +26,8 @@ namespace Wellness.WinForms.WellnessPrompt
             }
 
             _timer = new System.Threading.Timer(Timer_Tick);
-            var interval = timerInterval.HasValue ? timerInterval.Value * 60 * 1000: TimerInterval;
-            _timer.Change(interval, Timeout.Infinite);
+            _timerInterval = (timerIntervalMinutes.HasValue ? timerIntervalMinutes.Value : TimerInterval) * 60 * 1000;
+            _timer.Change(_timerInterval, Timeout.Infinite);
         }
         
 
@@ -57,7 +58,7 @@ namespace Wellness.WinForms.WellnessPrompt
                 }
             }
             
-            _timer.Change(TimerInterval, Timeout.Infinite);
+            _timer.Change(_timerInterval, Timeout.Infinite);
 
             Hide();
         }

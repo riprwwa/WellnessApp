@@ -7,7 +7,7 @@ namespace Wellness.WinForms
     {
         private const string _dateFormat = "yyyy_MM_dd";
         private const string _timeFormat = "HH:mm:ss";
-        private const int TimerInterval = 10 * 1000;
+        private const int TimerInterval = 10;
         private int _timerInterval;
         private readonly System.Threading.Timer _timer;
         private string _previousTitle = string.Empty;
@@ -17,7 +17,7 @@ namespace Wellness.WinForms
 
         public bool IsEnabled => _isEnabled;
 
-        public ActiveWindowTitleLogger(string folder, int? timerInterval = null)
+        public ActiveWindowTitleLogger(string folder, int? timerIntervalSeconds = null)
         {
             if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
             {
@@ -29,7 +29,7 @@ namespace Wellness.WinForms
                 _rootDir = System.Reflection.Assembly.GetEntryAssembly()!.Location;
             }
 
-            _timerInterval = timerInterval ?? TimerInterval;
+            _timerInterval = (timerIntervalSeconds ?? TimerInterval) * 1000;
             _timer = new System.Threading.Timer(Timer_Tick);
         }
 
@@ -56,12 +56,15 @@ namespace Wellness.WinForms
             var now = DateTime.Now;
             var date = now.ToString(_dateFormat);
             var time = now.ToString(_timeFormat);
-            
+
             _previousTime = now;
             _previousTitle = windowTitle!;
-            
+
             var line = $"{time} {windowTitle}";
             WriteToFile($"{date}_tracking.txt", line);
+
+            //var interval = GetInterval();
+            //_timer.Change(interval, interval);
         }
 
         private void WriteToFile(string name, string what)
@@ -82,9 +85,11 @@ namespace Wellness.WinForms
         public bool TimerEnabled(bool enabled)
         {
             // if !enabled, set it to run when the world ends
-            var to = enabled ? _timerInterval : int.MaxValue;
-            _timer.Change(to, to);
+            var interval = GetInterval(enabled);
+            _timer.Change(interval, interval);
             return _isEnabled = enabled;
         }
+
+        private int GetInterval(bool? enabled = null) => (enabled ?? _isEnabled) ? _timerInterval : Timeout.Infinite;
     }
 }

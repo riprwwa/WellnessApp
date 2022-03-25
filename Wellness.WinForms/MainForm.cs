@@ -13,13 +13,13 @@ namespace Wellness.WinForms
             InitializeComponent();
 
             var folder = ConfigurationManager.AppSettings["ActiveWindowTitleLogger_LogFolder"];
-            var parsed = int.TryParse(ConfigurationManager.AppSettings["ActiveWindowTitleLogger_TimeInteval_Seconds"],
-                out var trackingInterval);
+
+            var parsed = int.TryParse(ConfigurationManager.AppSettings["ActiveWindowTitleLogger_TimeInterval_Seconds"], out var trackingInterval);
             if (!parsed) trackingInterval = 10;
-            parsed = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
-            
+            if (trackingInterval < 0) trackingInterval = Timeout.Infinite;
             vm = new ActiveWindowTitleLogger(folder!, trackingInterval);
 
+            parsed = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
             prompt = new WellnessPromptForm(folder!, parsed ? timerInterval : null);
             prompt.Show();
 
@@ -77,6 +77,7 @@ namespace Wellness.WinForms
                 chkLogActiveWindowTitle.Checked = enabled;
             }
 
+            toggleWindowTitleLoggingToolStripMenuItem.Checked = enabled;
             vm.TimerEnabled(enabled);
         }
 
