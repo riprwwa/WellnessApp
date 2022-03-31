@@ -62,6 +62,7 @@ namespace Wellness.WinForms.WellnessPrompt
             this.txtDoing.PlaceholderText = "Writing code, reading documentation etc";
             this.txtDoing.Size = new System.Drawing.Size(685, 78);
             this.txtDoing.TabIndex = 0;
+            this.txtDoing.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.preSave);
             // 
             // grpBoxMisc
             // 
@@ -83,6 +84,7 @@ namespace Wellness.WinForms.WellnessPrompt
             this.txtBoxMisc.PlaceholderText = "Anything else";
             this.txtBoxMisc.Size = new System.Drawing.Size(685, 71);
             this.txtBoxMisc.TabIndex = 2000;
+            this.txtBoxMisc.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.preSave);
             // 
             // btnAccept
             // 
@@ -119,7 +121,6 @@ namespace Wellness.WinForms.WellnessPrompt
             // 
             // WellnessPromptForm
             // 
-            this.AcceptButton = this.btnAccept;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(699, 616);

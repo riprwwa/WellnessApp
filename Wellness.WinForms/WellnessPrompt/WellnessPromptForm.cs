@@ -135,8 +135,13 @@ namespace Wellness.WinForms.WellnessPrompt
 
         private const string _dateFormat = "yyyy_MM_dd";
         private const string _timeFormat = "HH:mm:ss";
+
         private void btnAccept_Click(object sender, EventArgs e)
         {
+            Save();
+        }
+
+        private void Save () {
             var feelings = GetFeelings();
 
             var json = JsonConvert.SerializeObject(feelings);
@@ -183,6 +188,12 @@ namespace Wellness.WinForms.WellnessPrompt
 
             using var writer = new StreamWriter(path, true);
             writer.WriteLine(what);
+        }
+
+        private void preSave(object sender, PreviewKeyDownEventArgs e)
+        {
+            if (e.KeyValue != (int)Keys.Enter) return;
+            if (e.Alt || e.Control) Save();
         }
     }
 }
