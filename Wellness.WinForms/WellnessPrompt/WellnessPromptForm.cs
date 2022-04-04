@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Wellness.WinForms.WellnessPrompt
 {
@@ -36,6 +37,7 @@ namespace Wellness.WinForms.WellnessPrompt
         public void ShowIt()
         {
             Invoke(Show);
+            FlashWindowEx(this);
         }
 
         private void Timer_Tick(object? state)
@@ -190,5 +192,44 @@ namespace Wellness.WinForms.WellnessPrompt
             if (e.KeyValue != (int)Keys.Enter) return;
             if (e.Alt || e.Control) Save();
         }
+
+        #region support flashing
+        // https://stackoverflow.com/a/11310217
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
+
+        //Flash both the window caption and taskbar button.
+        //This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags. 
+        public const UInt32 FLASHW_ALL = 3;
+
+        // Flash continuously until the window comes to the foreground. 
+        public const UInt32 FLASHW_TIMERNOFG = 12;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct FLASHWINFO
+        {
+            public UInt32 cbSize;
+            public IntPtr hwnd;
+            public UInt32 dwFlags;
+            public UInt32 uCount;
+            public UInt32 dwTimeout;
+        }
+
+        // Do the flashing - this does not involve a raincoat.
+        public static bool FlashWindowEx(Form form)
+        {
+            IntPtr hWnd = form.Handle;
+            FLASHWINFO fInfo = new FLASHWINFO();
+
+            fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
+            fInfo.hwnd = hWnd;
+            fInfo.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
+            fInfo.uCount = UInt32.MaxValue;
+            fInfo.dwTimeout = 0;
+
+            return FlashWindowEx(ref fInfo);
+        }
+        #endregion support flashing
     }
 }
