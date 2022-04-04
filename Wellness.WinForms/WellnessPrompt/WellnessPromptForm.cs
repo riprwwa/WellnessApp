@@ -6,6 +6,7 @@ namespace Wellness.WinForms.WellnessPrompt
 {
     public partial class WellnessPromptForm : Form
     {
+        private readonly bool _doFlashPrompt;
         private readonly string _rootDir;
         private List<Category>? _categories;
         private const int TimerInterval = 30;
@@ -14,8 +15,9 @@ namespace Wellness.WinForms.WellnessPrompt
         
         public DateTime NextShow { get; private set; }
 
-        public WellnessPromptForm(string folder, int? timerIntervalMinutes = null)
+        public WellnessPromptForm(string folder, int? timerIntervalMinutes = null, bool doFlashPrompt = false)
         {
+            _doFlashPrompt = doFlashPrompt;
             InitializeComponent();
 
             if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
@@ -37,7 +39,11 @@ namespace Wellness.WinForms.WellnessPrompt
         public void ShowIt()
         {
             Invoke(Show);
-            FlashWindowEx(this);
+            if (_doFlashPrompt)
+            {
+                TopMost = true;
+                FlashWindowEx(this);
+            }
         }
 
         private void Timer_Tick(object? state)

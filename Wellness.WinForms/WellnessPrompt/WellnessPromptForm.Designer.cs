@@ -131,7 +131,6 @@ namespace Wellness.WinForms.WellnessPrompt
             this.Name = "WellnessPromptForm";
             this.Padding = new System.Windows.Forms.Padding(4);
             this.Text = "WellnessPromptForm";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WellnessPromptForm_FormClosing);
             this.Load += new System.EventHandler(this.WellnessPromptForm_Load);
             this.grpBoxDoing.ResumeLayout(false);
