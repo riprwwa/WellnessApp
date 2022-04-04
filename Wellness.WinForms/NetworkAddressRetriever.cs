@@ -12,7 +12,7 @@ namespace Wellness.WinForms
                 var addresses = Dns.GetHostEntry(Dns.GetHostName())
                     .AddressList.Select(e =>
                     {
-                        var bytes = e.GetAddressBytes();
+                        var addressBytes = e.GetAddressBytes();
                         Func<byte[], string> ipv6ToHex = bytes =>
                         {
                             var hexed = bytes.Select(b => b.ToString("X2")).ToList();
@@ -24,12 +24,12 @@ namespace Wellness.WinForms
 
                             var deZeroed = paired.Select(pair => new Regex("^0{1,3}").Replace(pair, ""));
                             var res = string.Join(':', deZeroed);
-                            var index = res.IndexOf("0:0");
+                            var index = res.IndexOf("0:0", StringComparison.Ordinal);
                             return index < 0 ? res : new Regex("0(:0)+").Replace(res, "::", 1);
                         };
                         return e.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6
-                            ? ipv6ToHex(bytes)
-                            : string.Join('.', bytes.Select(w => w));
+                            ? ipv6ToHex(addressBytes)
+                            : string.Join('.', addressBytes.Select(w => w));
                     });
                 return addresses;
             }

@@ -18,7 +18,7 @@ namespace Wellness.WinForms
             }
             else
             {
-                MessageBox.Show("Already running?");
+                MessageBox.Show(@"Already running?");
             }
         }
 

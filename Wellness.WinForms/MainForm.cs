@@ -130,7 +130,7 @@ namespace Wellness.WinForms
             var time = remaining.TotalMinutes > 1
                 ? remaining.ToString(@"mm\mss\s")
                 : remaining.ToString(@"ss\s");
-            notifyIcon.Text = $"{time} to next wellness check-in";
+            notifyIcon.Text = $@"{time} to next wellness check-in";
         }
     }
 }

@@ -47,6 +47,15 @@ namespace Wellness.WinForms.WellnessPrompt
         {
             e.Cancel = true;
 
+            ClearControls();
+
+            NextShow = DateTime.Now.AddMilliseconds(_timerInterval);
+            _timer.Change(_timerInterval, Timeout.Infinite);
+            Hide();
+        }
+
+        private void ClearControls()
+        {
             txtBoxMisc.Text = txtDoing.Text = "";
             foreach (var grp in grpBoxFeelings.Controls)
             {
@@ -54,15 +63,10 @@ namespace Wellness.WinForms.WellnessPrompt
                 if (grpBox == null) continue;
                 foreach (var chk in grpBox.Controls)
                 {
-                    var chkBox = chk as CheckBox;
-                    if (chkBox == null) continue;
+                    if (chk is not CheckBox chkBox) continue;
                     chkBox.Checked = false;
                 }
             }
-
-            NextShow = DateTime.Now.AddMilliseconds(_timerInterval);
-            _timer.Change(_timerInterval, Timeout.Infinite);
-            Hide();
         }
 
         private void WellnessPromptForm_Load(object sender, EventArgs e)
@@ -85,13 +89,9 @@ namespace Wellness.WinForms.WellnessPrompt
             grpBoxFeelings.Controls.Clear();
 
             var size = grpBoxFeelings.Size;
-            var count = _categories.Count;
             var maxFeelingSize = 180;
             var maxFeelingsPerRow = size.Width / maxFeelingSize;
             var tabIndex = 0;
-            var grpStart = 4;
-            var grpLeft = 4;
-            var betweenGroups = 4;
             var rowSize = 20;
             var extraX = 20;
             var betweenFeelingRows = 10;
@@ -102,7 +102,6 @@ namespace Wellness.WinForms.WellnessPrompt
                 groupBox.BackColor = category.UiColor;
                 groupBox.TabStop = false;
                 groupBox.Text = category.Name;
-                //groupBox.Location = new Point(grpLeft, grpStart);
                 groupBox.Dock = DockStyle.Bottom;
 
                 var i = 0;
@@ -117,14 +116,12 @@ namespace Wellness.WinForms.WellnessPrompt
                     checkbox.TabIndex = tabIndex++;
                     checkbox.Text = category.Items[i];
                     checkbox.UseVisualStyleBackColor = true;
+                    checkbox.PreviewKeyDown += preSave!;
                     groupBox.Controls.Add(checkbox);
                 }
 
-                grpStart += betweenGroups;
-                
                 var feelingsHeight = rowSize + betweenFeelingRows + rowNumber * rowSize;
 
-                grpStart += feelingsHeight;
                 groupBox.Size = new Size(size.Width - 2, feelingsHeight);
 
                 grpBoxFeelings.Controls.Add(groupBox);
@@ -133,8 +130,8 @@ namespace Wellness.WinForms.WellnessPrompt
             grpBoxFeelings.ResumeLayout();
         }
 
-        private const string _dateFormat = "yyyy_MM_dd";
-        private const string _timeFormat = "HH:mm:ss";
+        private const string DateFormat = "yyyy_MM_dd";
+        private const string TimeFormat = "HH:mm:ss";
 
         private void btnAccept_Click(object sender, EventArgs e)
         {
@@ -146,8 +143,8 @@ namespace Wellness.WinForms.WellnessPrompt
 
             var json = JsonConvert.SerializeObject(feelings);
             var now = DateTime.Now;
-            var date = now.ToString(_dateFormat);
-            var time = now.ToString(_timeFormat);
+            var date = now.ToString(DateFormat);
+            var time = now.ToString(TimeFormat);
 
             var line = $"{time} '{json}'";
             WriteToFile($"{date}_feelings.txt", line);
@@ -159,13 +156,11 @@ namespace Wellness.WinForms.WellnessPrompt
             var feelings = new Checkin(txtDoing.Text, txtBoxMisc.Text, new List<FeelingType>());
             foreach (var grp in grpBoxFeelings.Controls)
             {
-                var grpBox = grp as GroupBox;
-                if (grpBox == null) continue;
+                if (grp is not GroupBox grpBox) continue;
                 var checkedFeelings = new List<string>();
                 foreach (var chk in grpBox.Controls)
                 {
-                    var chkBox = chk as CheckBox;
-                    if (chkBox == null) continue;
+                    if (chk is not CheckBox chkBox) continue;
                     if (!chkBox.Checked) continue;
                     checkedFeelings.Add(chkBox.Text);
                 }
