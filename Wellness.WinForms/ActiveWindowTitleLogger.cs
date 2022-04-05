@@ -30,6 +30,7 @@ namespace Wellness.WinForms
             }
 
             _timerInterval = (timerIntervalSeconds ?? TimerInterval) * 1000;
+            if (_timerInterval < 0) _timerInterval = -1;
             _timer = new System.Threading.Timer(Timer_Tick);
         }
 

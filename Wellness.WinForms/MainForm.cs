@@ -18,11 +18,11 @@ namespace Wellness.WinForms
             if (!parsedInterval) trackingInterval = 10;
             if (trackingInterval < 0) trackingInterval = Timeout.Infinite;
             vm = new ActiveWindowTitleLogger(folder!, trackingInterval);
-
-            if (!bool.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_FlashWindow"], out var doFlashPrompt)) 
-                doFlashPrompt = false;
+            
+            if (!bool.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_MakeReallyVisible"], out var makeReallyVisible))
+                makeReallyVisible = false;
             parsedInterval = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
-            prompt = new WellnessPromptForm(folder!, parsedInterval ? timerInterval : null, doFlashPrompt);
+            prompt = new WellnessPromptForm(folder!, parsedInterval ? timerInterval : null, makeReallyVisible);
             prompt.Show();
 
             RefreshAddresses();

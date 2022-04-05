@@ -6,18 +6,19 @@ namespace Wellness.WinForms.WellnessPrompt
 {
     public partial class WellnessPromptForm : Form
     {
-        private readonly bool _doFlashPrompt;
+        private readonly bool _makeReallyVisible;
         private readonly string _rootDir;
         private List<Category>? _categories;
         private const int TimerInterval = 30;
         private int _timerInterval;
         private readonly System.Threading.Timer _timer;
-        
+        private Dictionary<string, Tuple<Point, Rectangle>> _previousBoundsAndLocations = new();
+
         public DateTime NextShow { get; private set; }
 
-        public WellnessPromptForm(string folder, int? timerIntervalMinutes = null, bool doFlashPrompt = false)
+        public WellnessPromptForm(string folder, int? timerIntervalMinutes = null, bool makeReallyVisible = false)
         {
-            _doFlashPrompt = doFlashPrompt;
+            _makeReallyVisible = makeReallyVisible;
             InitializeComponent();
 
             if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
@@ -35,16 +36,48 @@ namespace Wellness.WinForms.WellnessPrompt
             _timer.Change(_timerInterval, Timeout.Infinite);
         }
         
-
         public void ShowIt()
         {
-            Invoke(Show);
-            if (_doFlashPrompt)
+            var location = Point.Empty;
+            if (_makeReallyVisible)
             {
+                // this is assumed based on mouse position
+                var mouseScreen = Screen.FromPoint(MousePosition);
+
+                // don't center if previous show was on the same screen
+                var screenKey = GetScreenKey(mouseScreen);
+                var wasThisScreenVisited = _previousBoundsAndLocations.TryGetValue(screenKey, out var previousPositionOnThisScreen);
+                
+                if (!wasThisScreenVisited)
+                {
+                    var pointX = (mouseScreen.Bounds.Width - Width) >> 1;
+                    var pointY = (mouseScreen.Bounds.Height - Height) >> 1;
+                    location = new Point(pointX + mouseScreen.Bounds.Left, pointY + mouseScreen.Bounds.Top);
+                }
+                else
+                {
+                    location = previousPositionOnThisScreen!.Item1;
+                }
+            }
+
+            Invoke(() =>
+            {
+                if (_makeReallyVisible && location != Point.Empty)
+                {
+                    Location = location;
+                }
+
+                Show();
+
+                if (!_makeReallyVisible) return;
+
                 TopMost = true;
                 FlashWindowEx(this);
-            }
+            });
         }
+
+        private string GetScreenKey(Screen screen) => $"{screen.DeviceName}{screen.Bounds}";
+
 
         private void Timer_Tick(object? state)
         {
@@ -57,9 +90,18 @@ namespace Wellness.WinForms.WellnessPrompt
 
             ClearControls();
 
+            UpdatePreviousWindowLocation();
+
             NextShow = DateTime.Now.AddMilliseconds(_timerInterval);
             _timer.Change(_timerInterval, Timeout.Infinite);
             Hide();
+        }
+
+        private void UpdatePreviousWindowLocation()
+        {
+            var mouseScreen = Screen.FromPoint(MousePosition);
+            var screenKey = GetScreenKey(mouseScreen);
+            _previousBoundsAndLocations[screenKey] = new Tuple<Point, Rectangle>(Location, mouseScreen.Bounds);
         }
 
         private void ClearControls()
@@ -146,7 +188,8 @@ namespace Wellness.WinForms.WellnessPrompt
             Save();
         }
 
-        private void Save () {
+        private void Save()
+        {
             var feelings = GetFeelings();
 
             var json = JsonConvert.SerializeObject(feelings);
@@ -195,11 +238,12 @@ namespace Wellness.WinForms.WellnessPrompt
 
         private void preSave(object sender, PreviewKeyDownEventArgs e)
         {
-            if (e.KeyValue != (int)Keys.Enter) return;
+            if (e.KeyValue != (int) Keys.Enter) return;
             if (e.Alt || e.Control) Save();
         }
 
         #region support flashing
+
         // https://stackoverflow.com/a/11310217
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -236,6 +280,7 @@ namespace Wellness.WinForms.WellnessPrompt
 
             return FlashWindowEx(ref fInfo);
         }
+
         #endregion support flashing
     }
 }

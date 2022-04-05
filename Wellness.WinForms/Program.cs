@@ -2,7 +2,11 @@ namespace Wellness.WinForms
 {
     internal static class Program
     {
-        const string MutexName = "ASDLnup8c2342346@#$@$Esdf";
+#if DEBUG
+        static readonly string MutexName = "Wellness.WinForms.Mutex.Debug";
+#else
+        static readonly string MutexName = "Wellness.WinForms.Mutex";
+#endif
 
         [STAThread]
         static void Main()
