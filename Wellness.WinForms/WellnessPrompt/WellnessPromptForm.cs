@@ -240,7 +240,7 @@ namespace Wellness.WinForms.WellnessPrompt
         private void preSave(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyValue != (int) Keys.Enter) return;
-            if (e.Alt || e.Control) Save();
+            if (e.Alt || e.Control || sender is CheckBox) Save();
         }
 
         #region support flashing
