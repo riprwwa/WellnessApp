@@ -67,6 +67,7 @@ namespace Wellness.WinForms.WellnessPrompt
                     Location = location;
                 }
 
+                txtDoing.Focus();
                 Show();
 
                 if (!_makeReallyVisible) return;
