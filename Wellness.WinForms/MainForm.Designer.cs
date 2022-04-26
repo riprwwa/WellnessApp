@@ -44,6 +44,7 @@
             this.btnRefreshAddresses = new System.Windows.Forms.Button();
             this.grpCheckin = new System.Windows.Forms.GroupBox();
             this.btnLaunchWellnessPrompt = new System.Windows.Forms.Button();
+            this.lblTimeToNextCheckin = new System.Windows.Forms.Label();
             this.ctxtMenuStrip.SuspendLayout();
             this.grpBoxLogging.SuspendLayout();
             this.grpBoxAddresses.SuspendLayout();
@@ -160,6 +161,7 @@
             // 
             // grpCheckin
             // 
+            this.grpCheckin.Controls.Add(this.lblTimeToNextCheckin);
             this.grpCheckin.Controls.Add(this.btnLaunchWellnessPrompt);
             this.grpCheckin.Location = new System.Drawing.Point(10, 177);
             this.grpCheckin.Name = "grpCheckin";
@@ -177,6 +179,15 @@
             this.btnLaunchWellnessPrompt.Text = "Launch Wellness Prompt";
             this.btnLaunchWellnessPrompt.UseVisualStyleBackColor = true;
             this.btnLaunchWellnessPrompt.Click += new System.EventHandler(this.btnLaunchWellnessPrompt_Click);
+            // 
+            // lblTimeToNextCheckin
+            // 
+            this.lblTimeToNextCheckin.AutoSize = true;
+            this.lblTimeToNextCheckin.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblTimeToNextCheckin.Location = new System.Drawing.Point(10, 61);
+            this.lblTimeToNextCheckin.Name = "lblTimeToNextCheckin";
+            this.lblTimeToNextCheckin.Size = new System.Drawing.Size(0, 15);
+            this.lblTimeToNextCheckin.TabIndex = 3;
             // 
             // MainForm
             // 
@@ -196,6 +207,7 @@
             this.grpBoxLogging.PerformLayout();
             this.grpBoxAddresses.ResumeLayout(false);
             this.grpCheckin.ResumeLayout(false);
+            this.grpCheckin.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -216,5 +228,6 @@
         private GroupBox grpCheckin;
         private Button btnLaunchWellnessPrompt;
         private ToolStripMenuItem showWellnessPromptToolStripMenuItem;
+        private Label lblTimeToNextCheckin;
     }
 }

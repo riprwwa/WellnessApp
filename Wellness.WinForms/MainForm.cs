@@ -1,5 +1,7 @@
+using System.ComponentModel;
 using System.Configuration;
 using Wellness.WinForms.WellnessPrompt;
+using Timer = System.Threading.Timer;
 
 namespace Wellness.WinForms
 {
@@ -7,6 +9,7 @@ namespace Wellness.WinForms
     {
         private ActiveWindowTitleLogger vm;
         private WellnessPromptForm prompt;
+        private Timer timer;
 
         public MainForm()
         {
@@ -23,9 +26,12 @@ namespace Wellness.WinForms
                 makeReallyVisible = false;
             parsedInterval = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
             prompt = new WellnessPromptForm(folder!, parsedInterval ? timerInterval : null, makeReallyVisible);
+            prompt.Closing += PromptOnClosing;
             prompt.Show();
 
             RefreshAddresses();
+
+            timer = new Timer(UpdateWellnessCheckinTimer);
         }
 
         private void mainForm_Shown(object sender, EventArgs e)
@@ -51,6 +57,8 @@ namespace Wellness.WinForms
             Show();
             WindowState = FormWindowState.Normal;
             notifyIcon.Visible = false;
+            UpdateWellnessCheckinTimer();
+            EnableTimerForGetTimeToNextCheckin(true);
         }
 
         private void HideIt()
@@ -58,6 +66,7 @@ namespace Wellness.WinForms
             notifyIcon.Visible = true;
             WindowState = FormWindowState.Minimized;
             Hide();
+            EnableTimerForGetTimeToNextCheckin(false);
         }
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
@@ -111,11 +120,6 @@ namespace Wellness.WinForms
             }
         }
 
-        private void LaunchWellnessPrompt()
-        {
-            prompt.ShowIt();
-        }
-
         private void btnLaunchWellnessPrompt_Click(object sender, EventArgs e)
         {
             LaunchWellnessPrompt();
@@ -126,13 +130,49 @@ namespace Wellness.WinForms
             LaunchWellnessPrompt();
         }
 
+        private void LaunchWellnessPrompt()
+        {
+            EnableTimerForGetTimeToNextCheckin(false);
+            prompt.ShowIt();
+        }
+
+        private void PromptOnClosing(object? sender, CancelEventArgs e)
+        {
+            if (!Visible) return;
+            EnableTimerForGetTimeToNextCheckin(true);
+        }
+
         private void notifyIcon_MouseMove(object sender, MouseEventArgs e)
         {
+            notifyIcon.Text = GetTimeToNextCheckin();
+        }
+
+        private void UpdateWellnessCheckinTimer(object? state = null)
+        {
+            Invoke(() => lblTimeToNextCheckin.Text = GetTimeToNextCheckin());
+        }
+
+        private string GetTimeToNextCheckin()
+        {
             var remaining = prompt.NextShow - DateTime.Now;
-            var time = remaining.TotalMinutes > 1
-                ? remaining.ToString(@"mm\mss\s")
-                : remaining.ToString(@"ss\s");
-            notifyIcon.Text = $@"{time} to next wellness check-in";
+            var time = remaining.TotalHours > 1
+                ? remaining.ToString(@"hh\hmm\mss\s")
+                : remaining.TotalMinutes > 1
+                    ? remaining.ToString(@"mm\mss\s")
+                    : remaining.ToString(@"ss\s");
+            return $@"{time} to next wellness check-in";
+        }
+
+        private void EnableTimerForGetTimeToNextCheckin(bool enabled)
+        {
+            if (enabled)
+            {
+                timer.Change(1 * 1000, 1 * 1000);
+            }
+            else
+            {
+                timer.Change(Timeout.Infinite, Timeout.Infinite);
+            }
         }
     }
 }

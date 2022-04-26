@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Timer = System.Threading.Timer;
+// ReSharper disable InconsistentNaming
 
 namespace Wellness.WinForms.WellnessPrompt
 {
@@ -11,7 +13,7 @@ namespace Wellness.WinForms.WellnessPrompt
         private List<Category>? _categories;
         private const int TimerInterval = 30;
         private int _timerInterval;
-        private readonly System.Threading.Timer _timer;
+        private readonly Timer _timer;
         private Dictionary<string, Tuple<Point, Rectangle>> _previousBoundsAndLocations = new();
 
         public DateTime NextShow { get; private set; }
@@ -31,7 +33,7 @@ namespace Wellness.WinForms.WellnessPrompt
                 _rootDir = Assembly.GetEntryAssembly()!.Location;
             }
 
-            _timer = new System.Threading.Timer(Timer_Tick);
+            _timer = new Timer(Timer_Tick);
             _timerInterval = (timerIntervalMinutes.HasValue ? timerIntervalMinutes.Value : TimerInterval) * 60 * 1000;
             _timer.Change(_timerInterval, Timeout.Infinite);
         }
@@ -244,27 +246,27 @@ namespace Wellness.WinForms.WellnessPrompt
         }
 
         #region support flashing
-
         // https://stackoverflow.com/a/11310217
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
 
         //Flash both the window caption and taskbar button.
         //This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags. 
-        public const UInt32 FLASHW_ALL = 3;
+        public const uint FLASHW_ALL = 3;
 
         // Flash continuously until the window comes to the foreground. 
-        public const UInt32 FLASHW_TIMERNOFG = 12;
+        public const uint FLASHW_TIMERNOFG = 12;
 
         [StructLayout(LayoutKind.Sequential)]
         public struct FLASHWINFO
         {
-            public UInt32 cbSize;
+            public uint cbSize;
             public IntPtr hwnd;
-            public UInt32 dwFlags;
-            public UInt32 uCount;
-            public UInt32 dwTimeout;
+            public uint dwFlags;
+            public uint uCount;
+            public uint dwTimeout;
         }
 
         // Do the flashing - this does not involve a raincoat.
@@ -276,7 +278,7 @@ namespace Wellness.WinForms.WellnessPrompt
             fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
             fInfo.hwnd = hWnd;
             fInfo.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
-            fInfo.uCount = UInt32.MaxValue;
+            fInfo.uCount = uint.MaxValue;
             fInfo.dwTimeout = 0;
 
             return FlashWindowEx(ref fInfo);
