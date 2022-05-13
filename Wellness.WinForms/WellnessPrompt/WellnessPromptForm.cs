@@ -68,7 +68,8 @@ namespace Wellness.WinForms.WellnessPrompt
                 {
                     Location = location;
                 }
-
+                
+                ClearControls();
                 txtDoing.Focus();
                 Show();
 
@@ -91,8 +92,6 @@ namespace Wellness.WinForms.WellnessPrompt
         {
             e.Cancel = true;
 
-            ClearControls();
-
             UpdatePreviousWindowLocation();
 
             NextShow = DateTime.Now.AddMilliseconds(_timerInterval);
@@ -109,7 +108,8 @@ namespace Wellness.WinForms.WellnessPrompt
 
         private void ClearControls()
         {
-            txtBoxMisc.Text = txtDoing.Text = "";
+            txtBoxMisc.Text = string.Empty;
+            txtDoing.Text = string.Empty;
             foreach (var grp in grpBoxFeelings.Controls)
             {
                 var grpBox = grp as GroupBox;
@@ -242,7 +242,13 @@ namespace Wellness.WinForms.WellnessPrompt
         private void preSave(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyValue != (int) Keys.Enter) return;
-            if (e.Alt || e.Control || sender is CheckBox) Save();
+            if (!e.Alt && !e.Control && !(sender is CheckBox)) return;
+            if (sender is TextBox box)
+            {
+                box.Text.TrimEnd('\n');
+                box.Text.TrimEnd('\r');
+            }
+            Save();
         }
 
         #region support flashing
