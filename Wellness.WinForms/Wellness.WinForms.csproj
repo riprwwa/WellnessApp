@@ -9,6 +9,7 @@
     <AssemblyName>WellnessApp</AssemblyName>
     <StartupObject>Wellness.WinForms.Program</StartupObject>
     <ApplicationIcon>wellness.ico</ApplicationIcon>
+	<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
   <ItemGroup>
