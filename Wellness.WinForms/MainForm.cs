@@ -10,6 +10,7 @@ namespace Wellness.WinForms
         private ActiveWindowTitleLogger vm;
         private WellnessPromptForm prompt;
         private Timer timer;
+        private string shortMessage;
 
         public MainForm()
         {
@@ -28,6 +29,8 @@ namespace Wellness.WinForms
             prompt = new WellnessPromptForm(folder!, parsedInterval ? timerInterval : null, makeReallyVisible);
             prompt.Closing += PromptOnClosing;
             prompt.Show();
+
+            shortMessage = ConfigurationManager.AppSettings["ShortMessage"] ?? "";
 
             RefreshAddresses();
 
@@ -173,6 +176,17 @@ namespace Wellness.WinForms
             {
                 timer.Change(Timeout.Infinite, Timeout.Infinite);
             }
+        }
+
+        private void btnTestShortMessage_Click(object sender, EventArgs e)
+        {
+            //var text = txtShortMessage.Text;
+            //new ShortMessageForm(text).Show();
+        }
+
+        private void TxtShortMessageOnTextChanged(object? sender, EventArgs e)
+        {
+            //if (sender != txtShortMessage) return;
         }
     }
 }
