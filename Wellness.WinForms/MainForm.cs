@@ -7,10 +7,10 @@ namespace Wellness.WinForms
 {
     public partial class MainForm : Form
     {
-        private ActiveWindowTitleLogger vm;
-        private WellnessPromptForm prompt;
-        private Timer timer;
-        private string shortMessage;
+        private readonly ActiveWindowTitleLogger _activeWindowTitleLogger;
+        private readonly WellnessPromptForm _wellnessPrompt;
+        private readonly Timer _wellnessPromptLabelTimer;
+        private readonly Timer _shortMessageTimer;
 
         public MainForm()
         {
@@ -21,50 +21,54 @@ namespace Wellness.WinForms
             var parsedInterval = int.TryParse(ConfigurationManager.AppSettings["ActiveWindowTitleLogger_TimeInterval_Seconds"], out var trackingInterval);
             if (!parsedInterval) trackingInterval = 10;
             if (trackingInterval < 0) trackingInterval = Timeout.Infinite;
-            vm = new ActiveWindowTitleLogger(folder!, trackingInterval);
+            _activeWindowTitleLogger = new ActiveWindowTitleLogger(folder!, trackingInterval);
             
             if (!bool.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_MakeReallyVisible"], out var makeReallyVisible))
                 makeReallyVisible = false;
             parsedInterval = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
-            prompt = new WellnessPromptForm(folder!, parsedInterval ? timerInterval : null, makeReallyVisible);
-            prompt.Closing += PromptOnClosing;
-            prompt.Show();
+            _wellnessPrompt = new WellnessPromptForm(folder!, parsedInterval ? timerInterval : null, makeReallyVisible);
+            _wellnessPrompt.Closing += PromptOnClosing;
+            _wellnessPrompt.Show();
 
-            shortMessage = ConfigurationManager.AppSettings["ShortMessage"] ?? "";
+            txtShortMessage.Text = ConfigurationManager.AppSettings["ShortMessage"] ?? "";
+            _shortMessageTimer = new Timer(ShortMessageThingy);
 
             RefreshAddresses();
 
-            timer = new Timer(UpdateWellnessCheckinTimer);
+            _wellnessPromptLabelTimer = new Timer(UpdateWellnessCheckinLabelText);
         }
 
+        #region show hide resize
         private void mainForm_Shown(object sender, EventArgs e)
         {
             ToggleLoggingOfWindowTitle(true, true);
-            HideIt();
+            ToggleWellnessPromptTimer(true, true);
+            HideMainForm();
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowIt();
+            ShowMainForm();
             Close();
         }
 
         private void mainForm_Resize(object sender, EventArgs e)
         {
-            if (FormWindowState.Minimized == WindowState)
-                HideIt();
+            if (FormWindowState.Minimized != WindowState) return;
+            HideMainForm();
         }
 
-        private void ShowIt()
+        private void ShowMainForm()
         {
             Show();
             WindowState = FormWindowState.Normal;
             notifyIcon.Visible = false;
-            UpdateWellnessCheckinTimer();
+
+            UpdateWellnessCheckinLabelText();
             EnableTimerForGetTimeToNextCheckin(true);
         }
 
-        private void HideIt()
+        private void HideMainForm()
         {
             notifyIcon.Visible = true;
             WindowState = FormWindowState.Minimized;
@@ -74,12 +78,23 @@ namespace Wellness.WinForms
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowIt();
+            ShowMainForm();
         }
 
+        private void notifyIcon_DoubleClick(object sender, EventArgs e)
+        {
+            ShowMainForm();
+        }
+        private void notifyIcon_MouseMove(object sender, MouseEventArgs e)
+        {
+            notifyIcon.Text = GetTimeToNextCheckin();
+        }
+        #endregion show hide resize
+
+        #region window logging
         private void toggleWindowTitleLoggingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToggleLoggingOfWindowTitle(!vm.IsEnabled, true);
+            ToggleLoggingOfWindowTitle(!_activeWindowTitleLogger.IsEnabled, true);
         }
 
         private void ToggleLoggingOfWindowTitle(bool enabled, bool alsoUpdateCheckbox = false)
@@ -92,19 +107,16 @@ namespace Wellness.WinForms
             }
 
             toggleWindowTitleLoggingToolStripMenuItem.Checked = enabled;
-            vm.TimerEnabled(enabled);
+            _activeWindowTitleLogger.TimerEnabled(enabled);
         }
 
         private void chkLogActiveWindowTitle_CheckedChanged(object sender, EventArgs e)
         {
             ToggleLoggingOfWindowTitle((sender as CheckBox)!.Checked);
         }
+        #endregion window logging
 
-        private void notifyIcon_DoubleClick(object sender, EventArgs e)
-        {
-            ShowIt();
-        }
-
+        #region network address things
         private void btnRefreshAddresses_Click(object sender, EventArgs e)
         {
             RefreshAddresses();
@@ -122,7 +134,9 @@ namespace Wellness.WinForms
                 // yes
             }
         }
+        #endregion network address things
 
+        #region wellness prompt
         private void btnLaunchWellnessPrompt_Click(object sender, EventArgs e)
         {
             LaunchWellnessPrompt();
@@ -136,28 +150,27 @@ namespace Wellness.WinForms
         private void LaunchWellnessPrompt()
         {
             EnableTimerForGetTimeToNextCheckin(false);
-            prompt.ShowIt();
+            _wellnessPrompt.ShowIt();
         }
 
         private void PromptOnClosing(object? sender, CancelEventArgs e)
         {
-            if (!Visible) return;
+            if (!_wellnessPrompt.Visible) return;
             EnableTimerForGetTimeToNextCheckin(true);
         }
 
-        private void notifyIcon_MouseMove(object sender, MouseEventArgs e)
+        private void UpdateWellnessCheckinLabelText(object? state = null)
         {
-            notifyIcon.Text = GetTimeToNextCheckin();
-        }
-
-        private void UpdateWellnessCheckinTimer(object? state = null)
-        {
-            Invoke(() => lblTimeToNextCheckin.Text = GetTimeToNextCheckin());
+            Invoke(() =>
+            {
+                lblTimeToNextCheckin.Text = GetTimeToNextCheckin();
+                lblTimeToNextCheckin.Visible = true;
+            });
         }
 
         private string GetTimeToNextCheckin()
         {
-            var remaining = prompt.NextShow - DateTime.Now;
+            var remaining = _wellnessPrompt.NextShow - DateTime.Now;
             var time = remaining.TotalHours > 1
                 ? remaining.ToString(@"hh\hmm\mss\s")
                 : remaining.TotalMinutes > 1
@@ -166,21 +179,43 @@ namespace Wellness.WinForms
             return $@"{time} to next wellness check-in";
         }
 
+        private void chkShowWellnessPrompt_CheckedChanged(object sender, EventArgs e)
+        {
+            ToggleWellnessPromptTimer((sender as CheckBox)!.Checked);
+        }
+
+        private void ToggleWellnessPromptTimer(bool enabled, bool alsoUpdateCheckbox = false)
+        {
+            if (alsoUpdateCheckbox)
+            {
+                chkShowWellnessPrompt.Checked = enabled;
+            }
+            
+            _wellnessPrompt.TimerEnabled(enabled);
+            
+            EnableTimerForGetTimeToNextCheckin(enabled);
+        }
+
         private void EnableTimerForGetTimeToNextCheckin(bool enabled)
         {
             if (enabled)
             {
-                timer.Change(1 * 1000, 1 * 1000);
+                _wellnessPromptLabelTimer.Change(1 * 1000, 1 * 1000);
+                _wellnessPrompt.ResetNextShow();
             }
             else
             {
-                timer.Change(Timeout.Infinite, Timeout.Infinite);
+                lblTimeToNextCheckin.Visible = false;
+                _wellnessPrompt.ResetNextShow();
+                _wellnessPromptLabelTimer.Change(Timeout.Infinite, Timeout.Infinite);
             }
         }
+        #endregion wellness prompt
 
+        #region short message
         private void btnTestShortMessage_Click(object sender, EventArgs e)
         {
-            //var text = txtShortMessage.Text;
+            var text = txtShortMessage.Text;
             //new ShortMessageForm(text).Show();
         }
 
@@ -188,5 +223,16 @@ namespace Wellness.WinForms
         {
             //if (sender != txtShortMessage) return;
         }
+        private void chkShortMessageEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ShortMessageThingy(object? state = null)
+        {
+
+        }
+
+        #endregion short message
     }
 }

@@ -26,6 +26,8 @@ namespace Wellness.WinForms
 
     public partial class ShortMessageForm : Form, IDisposable
     {
+        private readonly int _timerInterval;
+
         public ShortMessageForm(string config)
         {
             InitializeComponent();
@@ -44,11 +46,12 @@ namespace Wellness.WinForms
             this.Controls.Add(textbox);
 
             Opacity = 0;
-            timer = new Timer(Callback); 
-            timer.Change((int)settings.Periodicity.TotalMilliseconds, Timeout.Infinite);
+            _timer = new Timer(Callback);
+            _timerInterval = (int) settings.Periodicity.TotalMilliseconds;
+            _timer.Change(_timerInterval, Timeout.Infinite);
         }
 
-        private Timer timer;
+        private Timer _timer;
         private int stage = 0;
         private ShortMessageSettings settings;
 
@@ -71,7 +74,7 @@ namespace Wellness.WinForms
             Invoke(() =>
             {
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
-                timer.Change(settings.Duration, Timeout.Infinite);
+                _timer.Change(settings.Duration, Timeout.Infinite);
                 Opacity = 1;
             });
         }
@@ -80,7 +83,7 @@ namespace Wellness.WinForms
         {
             Invoke(() =>
             {
-                timer.Change(Timeout.Infinite, Timeout.Infinite);
+                _timer.Change(Timeout.Infinite, Timeout.Infinite);
                 Opacity = 0;
                 Close();
                 Thread.CurrentThread.Priority = ThreadPriority.Normal;
@@ -89,8 +92,16 @@ namespace Wellness.WinForms
 
         public new void Dispose()
         {
-            timer?.Dispose();
+            _timer?.Dispose();
             base.Dispose();
         }
+        public void TimerEnabled(bool enabled)
+        {
+            // if !enabled, set it to run when the world ends
+            var interval = GetInterval(enabled);
+            _timer.Change(interval, interval);
+        }
+
+        private int GetInterval(bool enabled) => enabled ? _timerInterval : Timeout.Infinite;
     }
 }

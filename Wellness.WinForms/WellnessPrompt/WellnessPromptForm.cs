@@ -94,9 +94,14 @@ namespace Wellness.WinForms.WellnessPrompt
 
             UpdatePreviousWindowLocation();
 
-            NextShow = DateTime.Now.AddMilliseconds(_timerInterval);
+            ResetNextShow();
             _timer.Change(_timerInterval, Timeout.Infinite);
             Hide();
+        }
+
+        public void ResetNextShow()
+        {
+            NextShow = DateTime.Now.AddMilliseconds(_timerInterval);
         }
 
         private void UpdatePreviousWindowLocation()
@@ -250,6 +255,14 @@ namespace Wellness.WinForms.WellnessPrompt
             }
             Save();
         }
+
+        public void TimerEnabled(bool enabled)
+        {
+            // if !enabled, set it to run when the world ends
+            var interval = GetInterval(enabled);
+            _timer.Change(interval, interval);
+        }
+        private int GetInterval(bool enabled) => enabled ? _timerInterval : Timeout.Infinite;
 
         #region support flashing
         // https://stackoverflow.com/a/11310217
