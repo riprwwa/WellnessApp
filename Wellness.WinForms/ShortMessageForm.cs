@@ -9,7 +9,7 @@ public class ShortMessageSettings
     {
         try
         {
-            var regex = new Regex(@"^(?<periodicity>[^\|]+)\|(?<duration>[^\|]+)\|(?<message>.+)$");
+            var regex = new Regex(@"^(?<periodicity>[^\|]+)\|(?<duration>[^\|]+)\|(?<message>.*)$");
             var match = regex.Match(config);
             if (!match.Success)
             {
@@ -57,7 +57,7 @@ public partial class ShortMessageForm : Form, IDisposable
 
         _message = new TextBox();
         _message.Dock = DockStyle.Fill;
-        _message.Font = new Font(new FontFamily("Arial"), 172);
+        _message.Font = new Font(new FontFamily("Arial"), 128);
         _message.ForeColor = Color.FromArgb(1, Color.RoyalBlue);
         _message.Multiline = true;
         _message.ReadOnly = true;
@@ -121,11 +121,12 @@ public partial class ShortMessageForm : Form, IDisposable
         {
             Invoke(() =>
             {
+                var fromSide = 200;
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
 
                 var mouseScreen = Screen.FromPoint(MousePosition);
-                Location = new Point(mouseScreen.Bounds.Left + 10, mouseScreen.Bounds.Top + 10);
-                Size = new Size(mouseScreen.Bounds.Width - 20, mouseScreen.Bounds.Height - 20);
+                Location = new Point(mouseScreen.Bounds.Left + fromSide, mouseScreen.Bounds.Top + fromSide);
+                Size = new Size(mouseScreen.Bounds.Width - 2 * fromSide, mouseScreen.Bounds.Height - 2 * fromSide);
 
                 _message.SelectionStart = 0;
                 _message.SelectionLength = 0;

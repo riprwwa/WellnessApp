@@ -209,14 +209,13 @@ namespace Wellness.WinForms
             if (enabled)
             {
                 _wellnessPromptLabelTimer.Change(1 * 1000, 1 * 1000);
-                _wellnessPrompt.ResetNextShow();
             }
             else
             {
                 lblTimeToNextCheckin.Visible = false;
-                _wellnessPrompt.ResetNextShow();
                 _wellnessPromptLabelTimer.Change(Timeout.Infinite, Timeout.Infinite);
             }
+            _wellnessPrompt.ResetNextShow();
         }
         #endregion wellness prompt
 
@@ -263,7 +262,10 @@ namespace Wellness.WinForms
             }
 
             _shortMessageForm.TimerEnabled(enabled);
+
+            EnableTimerForGetTimeToNextShortMessage(enabled);
         }
+
         private void EnableTimerForGetTimeToNextShortMessage(bool enabled)
         {
             if (enabled)
