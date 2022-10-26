@@ -9,12 +9,16 @@ namespace Wellness.WinForms
     {
         private readonly ActiveWindowTitleLogger _activeWindowTitleLogger;
         private readonly WellnessPromptForm _wellnessPrompt;
+        private readonly ShortMessageForm _shortMessageForm;
+
         private readonly Timer _wellnessPromptLabelTimer;
-        private readonly Timer _shortMessageTimer;
+        private readonly Timer _shortMessageFormLabelTimer;
 
         public MainForm()
         {
             InitializeComponent();
+
+            RefreshAddresses();
 
             var folder = ConfigurationManager.AppSettings["ActiveWindowTitleLogger_LogFolder"];
 
@@ -30,12 +34,11 @@ namespace Wellness.WinForms
             _wellnessPrompt.Closing += PromptOnClosing;
             _wellnessPrompt.Show();
 
-            txtShortMessage.Text = ConfigurationManager.AppSettings["ShortMessage"] ?? "";
-            _shortMessageTimer = new Timer(ShortMessageThingy);
-
-            RefreshAddresses();
-
             _wellnessPromptLabelTimer = new Timer(UpdateWellnessCheckinLabelText);
+            _shortMessageFormLabelTimer = new Timer(UpdateShortMessageLabelText);
+
+            _shortMessageForm = new ShortMessageForm();
+            txtShortMessage.Text = ConfigurationManager.AppSettings["ShortMessage"] ?? "";
         }
 
         #region show hide resize
@@ -43,6 +46,7 @@ namespace Wellness.WinForms
         {
             ToggleLoggingOfWindowTitle(true, true);
             ToggleWellnessPromptTimer(true, true);
+            ToggleShortMessageTimer(true, true);
             HideMainForm();
         }
 
@@ -66,6 +70,9 @@ namespace Wellness.WinForms
 
             UpdateWellnessCheckinLabelText();
             EnableTimerForGetTimeToNextCheckin(true);
+
+            _shortMessageForm.SetConfig(txtShortMessage.Text);
+            EnableTimerForGetTimeToNextShortMessage(true);
         }
 
         private void HideMainForm()
@@ -74,6 +81,7 @@ namespace Wellness.WinForms
             WindowState = FormWindowState.Minimized;
             Hide();
             EnableTimerForGetTimeToNextCheckin(false);
+            EnableTimerForGetTimeToNextShortMessage(false);
         }
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
@@ -99,7 +107,7 @@ namespace Wellness.WinForms
 
         private void ToggleLoggingOfWindowTitle(bool enabled, bool alsoUpdateCheckbox = false)
         {
-            toggleWindowTitleLoggingToolStripMenuItem.Text = $@"{(enabled ? "Stop" : "Start")} logging active window title";
+            //toggleWindowTitleLoggingToolStripMenuItem.Text = $@"{(enabled ? "Stop" : "Start")} logging active window title";
 
             if (alsoUpdateCheckbox)
             {
@@ -215,24 +223,60 @@ namespace Wellness.WinForms
         #region short message
         private void btnTestShortMessage_Click(object sender, EventArgs e)
         {
-            var text = txtShortMessage.Text;
-            //new ShortMessageForm(text).Show();
+            _shortMessageForm.Test();
         }
 
         private void TxtShortMessageOnTextChanged(object? sender, EventArgs e)
         {
-            //if (sender != txtShortMessage) return;
+            _shortMessageForm.SetConfig(txtShortMessage.Text);
         }
         private void chkShortMessageEnabled_CheckedChanged(object sender, EventArgs e)
         {
-
+            ToggleShortMessageTimer((sender as CheckBox)!.Checked);
         }
 
-        private void ShortMessageThingy(object? state = null)
+        private void UpdateShortMessageLabelText(object? state = null)
         {
-
+            Invoke(() =>
+            {
+                lblTimeToNextShortMessage.Text = GetTimeToNextShortMessage();
+                lblTimeToNextShortMessage.Visible = true;
+            });
         }
 
+        private string GetTimeToNextShortMessage()
+        {
+            var remaining = _shortMessageForm.NextShow - DateTime.Now;
+            var time = remaining.TotalHours > 1
+                ? remaining.ToString(@"hh\hmm\mss\s")
+                : remaining.TotalMinutes > 1
+                    ? remaining.ToString(@"mm\mss\s")
+                    : remaining.ToString(@"ss\s");
+            return $@"{time} to next short message";
+        }
+
+        private void ToggleShortMessageTimer(bool enabled, bool alsoUpdateCheckbox = false)
+        {
+            if (alsoUpdateCheckbox)
+            {
+                chkShortMessageEnabled.Checked = enabled;
+            }
+
+            _shortMessageForm.TimerEnabled(enabled);
+        }
+        private void EnableTimerForGetTimeToNextShortMessage(bool enabled)
+        {
+            if (enabled)
+            {
+                _shortMessageFormLabelTimer.Change(1 * 1000, 1 * 1000);
+            }
+            else
+            {
+                lblTimeToNextShortMessage.Visible = false;
+                _shortMessageFormLabelTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            }
+            _shortMessageForm.ResetNextShow();
+        }
         #endregion short message
     }
 }

@@ -51,6 +51,7 @@
             this.chkShortMessageEnabled = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnTestShortMessage = new System.Windows.Forms.Button();
+            this.lblTimeToNextShortMessage = new System.Windows.Forms.Label();
             this.ctxtMenuStrip.SuspendLayout();
             this.grpBoxLogging.SuspendLayout();
             this.grpBoxAddresses.SuspendLayout();
@@ -75,33 +76,33 @@
             this.showWellnessPromptToolStripMenuItem,
             this.quitToolStripMenuItem});
             this.ctxtMenuStrip.Name = "ctxtMenuStrip";
-            this.ctxtMenuStrip.Size = new System.Drawing.Size(245, 92);
+            this.ctxtMenuStrip.Size = new System.Drawing.Size(207, 92);
             // 
             // showToolStripMenuItem
             // 
             this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.showToolStripMenuItem.Text = "Show";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
             // 
             // toggleWindowTitleLoggingToolStripMenuItem
             // 
             this.toggleWindowTitleLoggingToolStripMenuItem.Name = "toggleWindowTitleLoggingToolStripMenuItem";
-            this.toggleWindowTitleLoggingToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            this.toggleWindowTitleLoggingToolStripMenuItem.Text = "Start logging active window title";
+            this.toggleWindowTitleLoggingToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.toggleWindowTitleLoggingToolStripMenuItem.Text = "Log active windows titles";
             this.toggleWindowTitleLoggingToolStripMenuItem.Click += new System.EventHandler(this.toggleWindowTitleLoggingToolStripMenuItem_Click);
             // 
             // showWellnessPromptToolStripMenuItem
             // 
             this.showWellnessPromptToolStripMenuItem.Name = "showWellnessPromptToolStripMenuItem";
-            this.showWellnessPromptToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.showWellnessPromptToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.showWellnessPromptToolStripMenuItem.Text = "Show wellness prompt";
             this.showWellnessPromptToolStripMenuItem.Click += new System.EventHandler(this.showWellnessPromptToolStripMenuItem_Click);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -194,6 +195,7 @@
             // 
             // lblTimeToNextCheckin
             // 
+            this.lblTimeToNextCheckin.BackColor = System.Drawing.SystemColors.Control;
             this.lblTimeToNextCheckin.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lblTimeToNextCheckin.Location = new System.Drawing.Point(8, 52);
             this.lblTimeToNextCheckin.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
@@ -213,13 +215,14 @@
             // 
             // grpShortMessage
             // 
+            this.grpShortMessage.Controls.Add(this.lblTimeToNextShortMessage);
             this.grpShortMessage.Controls.Add(this.txtShortMessage);
             this.grpShortMessage.Controls.Add(this.chkShortMessageEnabled);
             this.grpShortMessage.Controls.Add(this.label1);
             this.grpShortMessage.Controls.Add(this.btnTestShortMessage);
             this.grpShortMessage.Location = new System.Drawing.Point(10, 261);
             this.grpShortMessage.Name = "grpShortMessage";
-            this.grpShortMessage.Size = new System.Drawing.Size(573, 78);
+            this.grpShortMessage.Size = new System.Drawing.Size(573, 111);
             this.grpShortMessage.TabIndex = 6;
             this.grpShortMessage.TabStop = false;
             this.grpShortMessage.Text = "Short message";
@@ -229,9 +232,10 @@
             this.txtShortMessage.Location = new System.Drawing.Point(7, 45);
             this.txtShortMessage.Margin = new System.Windows.Forms.Padding(2);
             this.txtShortMessage.Name = "txtShortMessage";
-            this.txtShortMessage.Size = new System.Drawing.Size(561, 23);
+            this.txtShortMessage.Size = new System.Drawing.Size(560, 23);
             this.txtShortMessage.TabIndex = 5;
             this.txtShortMessage.Text = "00:30:00|10|This is a test message";
+            this.txtShortMessage.Leave += new System.EventHandler(this.TxtShortMessageOnTextChanged);
             // 
             // chkShortMessageEnabled
             // 
@@ -263,6 +267,17 @@
             this.btnTestShortMessage.TabIndex = 4;
             this.btnTestShortMessage.Text = "Test Short Message";
             this.btnTestShortMessage.UseVisualStyleBackColor = true;
+            this.btnTestShortMessage.Click += new System.EventHandler(this.btnTestShortMessage_Click);
+            // 
+            // lblTimeToNextShortMessage
+            // 
+            this.lblTimeToNextShortMessage.BackColor = System.Drawing.SystemColors.Control;
+            this.lblTimeToNextShortMessage.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblTimeToNextShortMessage.Location = new System.Drawing.Point(7, 84);
+            this.lblTimeToNextShortMessage.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTimeToNextShortMessage.Name = "lblTimeToNextShortMessage";
+            this.lblTimeToNextShortMessage.Size = new System.Drawing.Size(350, 15);
+            this.lblTimeToNextShortMessage.TabIndex = 8;
             // 
             // MainForm
             // 
@@ -313,5 +328,6 @@
         private Button btnTestShortMessage;
         private CheckBox chkShowWellnessPrompt;
         private CheckBox chkShortMessageEnabled;
+        private Label lblTimeToNextShortMessage;
     }
 }

@@ -39,7 +39,6 @@
             this.MaximizeBox = false;
             this.Name = "ShortMessageForm";
             this.ResumeLayout(false);
-
         }
 
         #endregion
