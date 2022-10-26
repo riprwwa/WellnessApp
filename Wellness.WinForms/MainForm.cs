@@ -37,8 +37,9 @@ namespace Wellness.WinForms
             _wellnessPromptLabelTimer = new Timer(UpdateWellnessCheckinLabelText);
             _shortMessageFormLabelTimer = new Timer(UpdateShortMessageLabelText);
 
-            _shortMessageForm = new ShortMessageForm();
             txtShortMessage.Text = ConfigurationManager.AppSettings["ShortMessage"] ?? "";
+            _shortMessageForm = new ShortMessageForm();
+            _shortMessageForm.SetConfig(txtShortMessage.Text);
         }
 
         #region show hide resize
@@ -71,7 +72,6 @@ namespace Wellness.WinForms
             UpdateWellnessCheckinLabelText();
             EnableTimerForGetTimeToNextCheckin(true);
 
-            _shortMessageForm.SetConfig(txtShortMessage.Text);
             EnableTimerForGetTimeToNextShortMessage(true);
         }
 
