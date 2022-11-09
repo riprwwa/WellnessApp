@@ -9,7 +9,7 @@ public class ShortMessageSettings
     {
         try
         {
-            var regex = new Regex(@"^(?<periodicity>[^\|]+)\|(?<duration>[^\|]+)\|(?<message>.*)$");
+            var regex = new Regex(@"^(?<periodicity>[^\|]+)\|(?<duration>[^\|]+)\|(|(?<fontSize>\d+))?(?<message>.*)$");
             var match = regex.Match(config);
             if (!match.Success)
             {
@@ -20,13 +20,18 @@ public class ShortMessageSettings
                     Message = ""
                 };
             }
-
-            return new ShortMessageSettings
+            var result = new ShortMessageSettings
             {
                 Periodicity = TimeSpan.Parse(match.Groups["periodicity"].Value),
                 Duration = int.Parse(match.Groups["duration"].Value),
                 Message = match.Groups["message"].Value
             };
+            if (int.TryParse(match.Groups["fontSize"].Value, out var fontSize))
+            {
+                result.FontSize = fontSize;
+            }
+
+            return result;
         }
         catch
         {
@@ -37,6 +42,7 @@ public class ShortMessageSettings
     public TimeSpan Periodicity { get; set; }
     public int Duration { get; set; }
     public string Message { get; set; }
+    public int? FontSize { get; set; }
 }
 
 public partial class ShortMessageForm : Form, IDisposable
@@ -57,8 +63,7 @@ public partial class ShortMessageForm : Form, IDisposable
 
         _message = new TextBox();
         _message.Dock = DockStyle.Fill;
-        _message.Font = new Font(new FontFamily("Arial"), 128);
-        _message.ForeColor = Color.FromArgb(1, Color.RoyalBlue);
+        _message.ForeColor = Color.Black;
         _message.Multiline = true;
         _message.ReadOnly = true;
         Controls.Add(_message);
@@ -121,15 +126,18 @@ public partial class ShortMessageForm : Form, IDisposable
         {
             Invoke(() =>
             {
-                var fromSide = 200;
                 Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
 
                 var mouseScreen = Screen.FromPoint(MousePosition);
-                Location = new Point(mouseScreen.Bounds.Left + fromSide, mouseScreen.Bounds.Top + fromSide);
-                Size = new Size(mouseScreen.Bounds.Width - 2 * fromSide, mouseScreen.Bounds.Height - 2 * fromSide);
+                var width = mouseScreen.Bounds.Width >> 1;
+                var height = mouseScreen.Bounds.Height >> 1;
+                Location = new Point(width >> 1, height >> 1);
+                Size = new Size(width, height);
 
                 _message.SelectionStart = 0;
                 _message.SelectionLength = 0;
+                var fontSize = 128; // calculate instead ?...
+                _message.Font = new Font(new FontFamily("Arial"), _settings.FontSize ?? fontSize);
 
                 _timer.Change(_settings.Duration, Timeout.Infinite);
                 Opacity = 1;
