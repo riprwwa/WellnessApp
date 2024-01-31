@@ -1,3 +1,7 @@
+﻿using System.Threading;
+using System.Windows.Forms;
+using System;
+
 namespace Wellness.WinForms
 {
     internal static class Program
@@ -11,10 +15,6 @@ namespace Wellness.WinForms
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-
             if (IsNew())
             {
                 var form = new MainForm();

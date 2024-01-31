@@ -1,4 +1,6 @@
-﻿namespace Wellness.WinForms
+﻿using System.Windows.Forms;
+
+namespace Wellness.WinForms
 {
     partial class MainForm
     {
@@ -43,8 +45,8 @@
             this.lstAddresses = new System.Windows.Forms.ListBox();
             this.btnRefreshAddresses = new System.Windows.Forms.Button();
             this.grpCheckin = new System.Windows.Forms.GroupBox();
-            this.btnLaunchWellnessPrompt = new System.Windows.Forms.Button();
             this.lblTimeToNextCheckin = new System.Windows.Forms.Label();
+            this.btnLaunchWellnessPrompt = new System.Windows.Forms.Button();
             this.ctxtMenuStrip.SuspendLayout();
             this.grpBoxLogging.SuspendLayout();
             this.grpBoxAddresses.SuspendLayout();
@@ -61,6 +63,7 @@
             // 
             // ctxtMenuStrip
             // 
+            this.ctxtMenuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.ctxtMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showToolStripMenuItem,
             this.toggleWindowTitleLoggingToolStripMenuItem,
@@ -100,9 +103,9 @@
             // chkLogActiveWindowTitle
             // 
             this.chkLogActiveWindowTitle.AutoSize = true;
-            this.chkLogActiveWindowTitle.Location = new System.Drawing.Point(6, 22);
+            this.chkLogActiveWindowTitle.Location = new System.Drawing.Point(5, 19);
             this.chkLogActiveWindowTitle.Name = "chkLogActiveWindowTitle";
-            this.chkLogActiveWindowTitle.Size = new System.Drawing.Size(148, 19);
+            this.chkLogActiveWindowTitle.Size = new System.Drawing.Size(134, 17);
             this.chkLogActiveWindowTitle.TabIndex = 1;
             this.chkLogActiveWindowTitle.Text = "Log active window title";
             this.chkLogActiveWindowTitle.UseVisualStyleBackColor = true;
@@ -112,9 +115,9 @@
             // 
             this.grpBoxLogging.Controls.Add(this.btnViewLogs);
             this.grpBoxLogging.Controls.Add(this.chkLogActiveWindowTitle);
-            this.grpBoxLogging.Location = new System.Drawing.Point(12, 12);
+            this.grpBoxLogging.Location = new System.Drawing.Point(10, 10);
             this.grpBoxLogging.Name = "grpBoxLogging";
-            this.grpBoxLogging.Size = new System.Drawing.Size(573, 55);
+            this.grpBoxLogging.Size = new System.Drawing.Size(491, 47);
             this.grpBoxLogging.TabIndex = 2;
             this.grpBoxLogging.TabStop = false;
             this.grpBoxLogging.Text = "Log titles";
@@ -122,9 +125,9 @@
             // btnViewLogs
             // 
             this.btnViewLogs.Enabled = false;
-            this.btnViewLogs.Location = new System.Drawing.Point(492, 18);
+            this.btnViewLogs.Location = new System.Drawing.Point(422, 16);
             this.btnViewLogs.Name = "btnViewLogs";
-            this.btnViewLogs.Size = new System.Drawing.Size(75, 23);
+            this.btnViewLogs.Size = new System.Drawing.Size(64, 20);
             this.btnViewLogs.TabIndex = 2;
             this.btnViewLogs.Text = "View logs";
             this.btnViewLogs.UseVisualStyleBackColor = true;
@@ -133,9 +136,9 @@
             // 
             this.grpBoxAddresses.Controls.Add(this.lstAddresses);
             this.grpBoxAddresses.Controls.Add(this.btnRefreshAddresses);
-            this.grpBoxAddresses.Location = new System.Drawing.Point(12, 73);
+            this.grpBoxAddresses.Location = new System.Drawing.Point(10, 63);
             this.grpBoxAddresses.Name = "grpBoxAddresses";
-            this.grpBoxAddresses.Size = new System.Drawing.Size(573, 97);
+            this.grpBoxAddresses.Size = new System.Drawing.Size(491, 84);
             this.grpBoxAddresses.TabIndex = 3;
             this.grpBoxAddresses.TabStop = false;
             this.grpBoxAddresses.Text = "Network addresses";
@@ -143,17 +146,16 @@
             // lstAddresses
             // 
             this.lstAddresses.FormattingEnabled = true;
-            this.lstAddresses.ItemHeight = 15;
-            this.lstAddresses.Location = new System.Drawing.Point(8, 22);
+            this.lstAddresses.Location = new System.Drawing.Point(7, 19);
             this.lstAddresses.Name = "lstAddresses";
-            this.lstAddresses.Size = new System.Drawing.Size(478, 64);
+            this.lstAddresses.Size = new System.Drawing.Size(410, 56);
             this.lstAddresses.TabIndex = 3;
             // 
             // btnRefreshAddresses
             // 
-            this.btnRefreshAddresses.Location = new System.Drawing.Point(492, 43);
+            this.btnRefreshAddresses.Location = new System.Drawing.Point(422, 37);
             this.btnRefreshAddresses.Name = "btnRefreshAddresses";
-            this.btnRefreshAddresses.Size = new System.Drawing.Size(75, 23);
+            this.btnRefreshAddresses.Size = new System.Drawing.Size(64, 20);
             this.btnRefreshAddresses.TabIndex = 2;
             this.btnRefreshAddresses.Text = "Refresh";
             this.btnRefreshAddresses.UseVisualStyleBackColor = true;
@@ -163,37 +165,37 @@
             // 
             this.grpCheckin.Controls.Add(this.lblTimeToNextCheckin);
             this.grpCheckin.Controls.Add(this.btnLaunchWellnessPrompt);
-            this.grpCheckin.Location = new System.Drawing.Point(10, 177);
+            this.grpCheckin.Location = new System.Drawing.Point(9, 153);
             this.grpCheckin.Name = "grpCheckin";
-            this.grpCheckin.Size = new System.Drawing.Size(573, 97);
+            this.grpCheckin.Size = new System.Drawing.Size(491, 84);
             this.grpCheckin.TabIndex = 5;
             this.grpCheckin.TabStop = false;
             this.grpCheckin.Text = "Wellness prompt";
-            // 
-            // btnLaunchWellnessPrompt
-            // 
-            this.btnLaunchWellnessPrompt.Location = new System.Drawing.Point(10, 22);
-            this.btnLaunchWellnessPrompt.Name = "btnLaunchWellnessPrompt";
-            this.btnLaunchWellnessPrompt.Size = new System.Drawing.Size(186, 23);
-            this.btnLaunchWellnessPrompt.TabIndex = 2;
-            this.btnLaunchWellnessPrompt.Text = "Launch Wellness Prompt";
-            this.btnLaunchWellnessPrompt.UseVisualStyleBackColor = true;
-            this.btnLaunchWellnessPrompt.Click += new System.EventHandler(this.btnLaunchWellnessPrompt_Click);
             // 
             // lblTimeToNextCheckin
             // 
             this.lblTimeToNextCheckin.AutoSize = true;
             this.lblTimeToNextCheckin.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lblTimeToNextCheckin.Location = new System.Drawing.Point(10, 61);
+            this.lblTimeToNextCheckin.Location = new System.Drawing.Point(9, 53);
             this.lblTimeToNextCheckin.Name = "lblTimeToNextCheckin";
-            this.lblTimeToNextCheckin.Size = new System.Drawing.Size(0, 15);
+            this.lblTimeToNextCheckin.Size = new System.Drawing.Size(0, 13);
             this.lblTimeToNextCheckin.TabIndex = 3;
+            // 
+            // btnLaunchWellnessPrompt
+            // 
+            this.btnLaunchWellnessPrompt.Location = new System.Drawing.Point(9, 19);
+            this.btnLaunchWellnessPrompt.Name = "btnLaunchWellnessPrompt";
+            this.btnLaunchWellnessPrompt.Size = new System.Drawing.Size(159, 20);
+            this.btnLaunchWellnessPrompt.TabIndex = 2;
+            this.btnLaunchWellnessPrompt.Text = "Launch Wellness Prompt";
+            this.btnLaunchWellnessPrompt.UseVisualStyleBackColor = true;
+            this.btnLaunchWellnessPrompt.Click += new System.EventHandler(this.btnLaunchWellnessPrompt_Click);
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(593, 450);
+            this.ClientSize = new System.Drawing.Size(508, 390);
             this.Controls.Add(this.grpCheckin);
             this.Controls.Add(this.grpBoxAddresses);
             this.Controls.Add(this.grpBoxLogging);

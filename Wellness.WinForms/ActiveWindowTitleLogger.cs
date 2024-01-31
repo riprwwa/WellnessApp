@@ -1,5 +1,8 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace Wellness.WinForms
 {
@@ -26,7 +29,7 @@ namespace Wellness.WinForms
 
             if (string.IsNullOrWhiteSpace(_rootDir))
             {
-                _rootDir = System.Reflection.Assembly.GetEntryAssembly()!.Location;
+                _rootDir = System.Reflection.Assembly.GetEntryAssembly().Location;
             }
 
             _timerInterval = (timerIntervalSeconds ?? TimerInterval) * 1000;
@@ -40,7 +43,7 @@ namespace Wellness.WinForms
         [DllImport("user32.dll")]
         static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
-        private static string? GetActiveWindowTitle()
+        private static string GetActiveWindowTitle()
         {
             const int nChars = 256;
             var buff = new StringBuilder(nChars);
@@ -49,7 +52,7 @@ namespace Wellness.WinForms
             return GetWindowText(handle, buff, nChars) > 0 ? buff.ToString() : null;
         }
 
-        private void Timer_Tick(object? state)
+        private void Timer_Tick(object state)
         {
             var windowTitle = GetActiveWindowTitle();
             if (_previousTitle == windowTitle) return;
@@ -59,7 +62,7 @@ namespace Wellness.WinForms
             var time = now.ToString(_timeFormat);
 
             _previousTime = now;
-            _previousTitle = windowTitle!;
+            _previousTitle = windowTitle;
 
             var line = $"{time} {windowTitle}";
             WriteToFile($"{date}_tracking.txt", line);
@@ -71,14 +74,16 @@ namespace Wellness.WinForms
         private void WriteToFile(string name, string what)
         {
             var path = Path.Combine(_rootDir, name);
-            var dir = Path.GetDirectoryName(path)!;
+            var dir = Path.GetDirectoryName(path);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
 
-            using var writer = new StreamWriter(path, true);
-            writer.WriteLine(what);
+            using (var writer = new StreamWriter(path, true))
+            {
+                writer.WriteLine(what);
+            }
         }
 
         private string TimespanToString(TimeSpan span) => $"{span.Hours:00}h{span.Minutes:00}m{span.Seconds:00}s";
