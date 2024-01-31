@@ -51,7 +51,7 @@ namespace Wellness.WinForms.WellnessPrompt
             this.grpBoxDoing.Size = new System.Drawing.Size(691, 100);
             this.grpBoxDoing.TabIndex = 0;
             this.grpBoxDoing.TabStop = false;
-            this.grpBoxDoing.Text = "What are you doing right now?";
+            this.grpBoxDoing.Text = "What are you doing right now? (writing code, reading documentation etc)";
             // 
             // txtDoing
             // 
@@ -59,7 +59,6 @@ namespace Wellness.WinForms.WellnessPrompt
             this.txtDoing.Location = new System.Drawing.Point(3, 19);
             this.txtDoing.Multiline = true;
             this.txtDoing.Name = "txtDoing";
-            this.txtDoing.PlaceholderText = "Writing code, reading documentation etc";
             this.txtDoing.Size = new System.Drawing.Size(685, 78);
             this.txtDoing.TabIndex = 0;
             this.txtDoing.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.preSave);
@@ -81,7 +80,6 @@ namespace Wellness.WinForms.WellnessPrompt
             this.txtBoxMisc.Location = new System.Drawing.Point(3, 19);
             this.txtBoxMisc.Multiline = true;
             this.txtBoxMisc.Name = "txtBoxMisc";
-            this.txtBoxMisc.PlaceholderText = "Anything else";
             this.txtBoxMisc.Size = new System.Drawing.Size(685, 71);
             this.txtBoxMisc.TabIndex = 2000;
             this.txtBoxMisc.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.preSave);

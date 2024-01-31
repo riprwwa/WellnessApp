@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Wellness.WinForms
@@ -22,14 +25,16 @@ namespace Wellness.WinForms
                                 paired.Add(hexed[i] + hexed[i + 1]);
                             }
 
-                            var deZeroed = paired.Select(pair => new Regex("^0{1,3}").Replace(pair, ""));
-                            var res = string.Join(':', deZeroed);
+                            var deZeroed = paired
+                                .Select(pair => new Regex("^0{1,3}").Replace(pair, ""));
+                            var res = deZeroed.Aggregate("", (a, b) => a + ":" + b);
                             var index = res.IndexOf("0:0", StringComparison.Ordinal);
                             return index < 0 ? res : new Regex("0(:0)+").Replace(res, "::", 1);
                         };
                         return e.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6
                             ? ipv6ToHex(addressBytes)
-                            : string.Join('.', addressBytes.Select(w => w));
+                            : addressBytes.Aggregate("", (a, b) => a + "." + b);
+
                     });
                 return addresses;
             }

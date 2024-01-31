@@ -1,6 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows.Forms;
+using Newtonsoft.Json;
 using Timer = System.Threading.Timer;
 // ReSharper disable InconsistentNaming
 
@@ -10,16 +17,18 @@ namespace Wellness.WinForms.WellnessPrompt
     {
         private readonly bool _makeReallyVisible;
         private readonly string _rootDir;
-        private List<Category>? _categories;
+        private List<Category> _categories;
         private const int TimerInterval = 30;
         private int _timerInterval;
         private readonly Timer _timer;
-        private Dictionary<string, Tuple<Point, Rectangle>> _previousBoundsAndLocations = new();
+        private Dictionary<string, Tuple<Point, Rectangle>> _previousBoundsAndLocations = new Dictionary<string, Tuple<Point, Rectangle>>();
 
         public DateTime NextShow { get; private set; }
 
         public WellnessPromptForm(string folder, int? timerIntervalMinutes = null, bool makeReallyVisible = false)
         {
+            showDelegate = ShowDelegateMethod;
+
             _makeReallyVisible = makeReallyVisible;
             InitializeComponent();
 
@@ -30,14 +39,14 @@ namespace Wellness.WinForms.WellnessPrompt
 
             if (string.IsNullOrWhiteSpace(_rootDir))
             {
-                _rootDir = Assembly.GetEntryAssembly()!.Location;
+                _rootDir = Assembly.GetEntryAssembly().Location;
             }
 
             _timer = new Timer(Timer_Tick);
             _timerInterval = (timerIntervalMinutes.HasValue ? timerIntervalMinutes.Value : TimerInterval) * 60 * 1000;
             _timer.Change(_timerInterval, Timeout.Infinite);
         }
-        
+
         public void ShowIt()
         {
             var location = Point.Empty;
@@ -49,7 +58,7 @@ namespace Wellness.WinForms.WellnessPrompt
                 // don't center if previous show was on the same screen
                 var screenKey = GetScreenKey(mouseScreen);
                 var wasThisScreenVisited = _previousBoundsAndLocations.TryGetValue(screenKey, out var previousPositionOnThisScreen);
-                
+
                 if (!wasThisScreenVisited)
                 {
                     var pointX = (mouseScreen.Bounds.Width - Width) >> 1;
@@ -58,32 +67,38 @@ namespace Wellness.WinForms.WellnessPrompt
                 }
                 else
                 {
-                    location = previousPositionOnThisScreen!.Item1;
+                    location = previousPositionOnThisScreen.Item1;
                 }
             }
 
-            Invoke(() =>
-            {
-                if (_makeReallyVisible && location != Point.Empty)
-                {
-                    Location = location;
-                }
-                
-                ClearControls();
-                txtDoing.Focus();
-                Show();
-
-                if (!_makeReallyVisible) return;
-
-                TopMost = true;
-                FlashWindowEx(this);
-            });
+            Invoke(showDelegate, location);
         }
+
+        delegate void ShowDelegate(Point location);
+        private void ShowDelegateMethod(Point location)
+        {
+            if (_makeReallyVisible && location != Point.Empty)
+            {
+                Location = location;
+            }
+
+            ClearControls();
+            txtDoing.Focus();
+            Show();
+
+            if (!_makeReallyVisible) return;
+
+            TopMost = true;
+            FlashWindowEx(this);
+        }
+
+        private ShowDelegate showDelegate;
+
 
         private string GetScreenKey(Screen screen) => $"{screen.DeviceName}{screen.Bounds}";
 
 
-        private void Timer_Tick(object? state)
+        private void Timer_Tick(object state)
         {
             ShowIt();
         }
@@ -116,7 +131,8 @@ namespace Wellness.WinForms.WellnessPrompt
                 if (grpBox == null) continue;
                 foreach (var chk in grpBox.Controls)
                 {
-                    if (chk is not CheckBox chkBox) continue;
+                    var chkBox = chk as CheckBox;
+                    if (chkBox == null) continue;
                     chkBox.Checked = false;
                 }
             }
@@ -127,11 +143,14 @@ namespace Wellness.WinForms.WellnessPrompt
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "Wellness.WinForms.feelings.json";
 
-            using var stream = assembly.GetManifestResourceStream(resourceName);
-            using var reader = new StreamReader(stream!);
-            var result = reader.ReadToEnd();
-            _categories = JsonConvert.DeserializeObject<List<Category>>(result);
-            LoadCategories();
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            using (var reader = new StreamReader(stream))
+            {
+
+                var result = reader.ReadToEnd();
+                _categories = JsonConvert.DeserializeObject<List<Category>>(result);
+                LoadCategories();
+            }
         }
 
         private void LoadCategories()
@@ -149,7 +168,7 @@ namespace Wellness.WinForms.WellnessPrompt
             var extraX = 20;
             var betweenFeelingRows = 10;
 
-            foreach (var category in _categories!)
+            foreach (var category in _categories)
             {
                 var groupBox = new GroupBox();
                 groupBox.BackColor = category.UiColor;
@@ -169,7 +188,7 @@ namespace Wellness.WinForms.WellnessPrompt
                     checkbox.TabIndex = tabIndex++;
                     checkbox.Text = category.Items[i];
                     checkbox.UseVisualStyleBackColor = true;
-                    checkbox.PreviewKeyDown += preSave!;
+                    checkbox.PreviewKeyDown += preSave;
                     groupBox.Controls.Add(checkbox);
                 }
 
@@ -210,11 +229,13 @@ namespace Wellness.WinForms.WellnessPrompt
             var feelings = new Checkin(txtDoing.Text, txtBoxMisc.Text, new List<FeelingType>());
             foreach (var grp in grpBoxFeelings.Controls)
             {
-                if (grp is not GroupBox grpBox) continue;
+                var grpBox = grp as GroupBox;
+                if (grpBox == null) continue;
                 var checkedFeelings = new List<string>();
                 foreach (var chk in grpBox.Controls)
                 {
-                    if (chk is not CheckBox chkBox) continue;
+                    var chkBox = chk as CheckBox;
+                    if (chkBox == null) continue;
                     if (!chkBox.Checked) continue;
                     checkedFeelings.Add(chkBox.Text);
                 }
@@ -229,19 +250,21 @@ namespace Wellness.WinForms.WellnessPrompt
         private void WriteToFile(string name, string what)
         {
             var path = Path.Combine(_rootDir, name);
-            var dir = Path.GetDirectoryName(path)!;
+            var dir = Path.GetDirectoryName(path);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
 
-            using var writer = new StreamWriter(path, true);
-            writer.WriteLine(what);
+            using (var writer = new StreamWriter(path, true))
+            {
+                writer.WriteLine(what);
+            }
         }
 
         private void preSave(object sender, PreviewKeyDownEventArgs e)
         {
-            if (e.KeyValue != (int) Keys.Enter) return;
+            if (e.KeyValue != (int)Keys.Enter) return;
             if (!e.Alt && !e.Control && !(sender is CheckBox)) return;
             if (sender is TextBox box)
             {

@@ -1,5 +1,9 @@
+﻿using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
+using System.Threading;
+using System.Windows.Forms;
 using Wellness.WinForms.WellnessPrompt;
 using Timer = System.Threading.Timer;
 
@@ -13,19 +17,22 @@ namespace Wellness.WinForms
 
         public MainForm()
         {
+            setTimeToCheckin = SetTimeToCheckinMethod;
             InitializeComponent();
 
             var folder = ConfigurationManager.AppSettings["ActiveWindowTitleLogger_LogFolder"];
+            if (folder == null) folder = System.Environment.CurrentDirectory;
 
             var parsedInterval = int.TryParse(ConfigurationManager.AppSettings["ActiveWindowTitleLogger_TimeInterval_Seconds"], out var trackingInterval);
             if (!parsedInterval) trackingInterval = 10;
             if (trackingInterval < 0) trackingInterval = Timeout.Infinite;
-            vm = new ActiveWindowTitleLogger(folder!, trackingInterval);
-            
+            vm = new ActiveWindowTitleLogger(folder, trackingInterval);
+
             if (!bool.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_MakeReallyVisible"], out var makeReallyVisible))
                 makeReallyVisible = false;
             parsedInterval = int.TryParse(ConfigurationManager.AppSettings["WellnessCheckin_TimeInterval_Minutes"], out var timerInterval);
-            prompt = new WellnessPromptForm(folder!, parsedInterval ? timerInterval : null, makeReallyVisible);
+            var defaultInterval = 30;
+            prompt = new WellnessPromptForm(folder, parsedInterval ? timerInterval : defaultInterval, makeReallyVisible);
             prompt.Closing += PromptOnClosing;
             prompt.Show();
 
@@ -94,7 +101,7 @@ namespace Wellness.WinForms
 
         private void chkLogActiveWindowTitle_CheckedChanged(object sender, EventArgs e)
         {
-            ToggleLoggingOfWindowTitle((sender as CheckBox)!.Checked);
+            ToggleLoggingOfWindowTitle((sender as CheckBox).Checked);
         }
 
         private void notifyIcon_DoubleClick(object sender, EventArgs e)
@@ -136,7 +143,7 @@ namespace Wellness.WinForms
             prompt.ShowIt();
         }
 
-        private void PromptOnClosing(object? sender, CancelEventArgs e)
+        private void PromptOnClosing(object sender, CancelEventArgs e)
         {
             if (!Visible) return;
             EnableTimerForGetTimeToNextCheckin(true);
@@ -147,9 +154,18 @@ namespace Wellness.WinForms
             notifyIcon.Text = GetTimeToNextCheckin();
         }
 
-        private void UpdateWellnessCheckinTimer(object? state = null)
+        delegate void SetTimeToCheckin();
+
+        private SetTimeToCheckin setTimeToCheckin;
+
+        private void SetTimeToCheckinMethod()
         {
-            Invoke(() => lblTimeToNextCheckin.Text = GetTimeToNextCheckin());
+            lblTimeToNextCheckin.Text = GetTimeToNextCheckin();
+        }
+
+        private void UpdateWellnessCheckinTimer(object state = null)
+        {
+            Invoke(setTimeToCheckin);
         }
 
         private string GetTimeToNextCheckin()
