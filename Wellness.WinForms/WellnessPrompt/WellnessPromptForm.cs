@@ -161,11 +161,11 @@ namespace Wellness.WinForms.WellnessPrompt
             grpBoxFeelings.Controls.Clear();
 
             var size = grpBoxFeelings.Size;
-            var maxFeelingSize = 180;
-            var maxFeelingsPerRow = size.Width / maxFeelingSize;
+            var maxFeelingWidth = 180;
+            var maxFeelingsPerRow = size.Width / maxFeelingWidth;
             var tabIndex = 0;
-            var rowSize = 20;
-            var extraX = 20;
+            var rowHeight = 20;
+            var checkBoxExtraWidth = 20;
             var betweenFeelingRows = 10;
 
             foreach (var category in _categories)
@@ -175,24 +175,27 @@ namespace Wellness.WinForms.WellnessPrompt
                 groupBox.TabStop = false;
                 groupBox.Text = category.Name;
                 groupBox.Dock = DockStyle.Bottom;
-
-                var i = 0;
-                var rowNumber = category.Items.Count / maxFeelingsPerRow + 1;
-                for (; i < category.Items.Count; i++)
+                
+                for (var i = 0; i < category.Items.Count; i++)
                 {
-                    var checkbox = new CheckBox();
-                    var startX = maxFeelingSize * (i % maxFeelingsPerRow) + extraX;
-                    var startY = (i / maxFeelingsPerRow) * rowSize + rowSize;
-                    checkbox.Location = new Point(startX, startY);
-                    checkbox.Size = new Size(maxFeelingSize, rowSize);
-                    checkbox.TabIndex = tabIndex++;
-                    checkbox.Text = category.Items[i];
-                    checkbox.UseVisualStyleBackColor = true;
+                    var startX = maxFeelingWidth * (i % maxFeelingsPerRow) + checkBoxExtraWidth;
+                    var startY = (i / maxFeelingsPerRow + 1) * rowHeight;
+
+                    var checkbox = new CheckBox
+                    {
+                        Location = new Point(startX, startY),
+                        Size = new Size(maxFeelingWidth, rowHeight),
+                        TabIndex = tabIndex++,
+                        Text = category.Items[i],
+                        UseVisualStyleBackColor = true
+                    };
                     checkbox.PreviewKeyDown += preSave;
+
                     groupBox.Controls.Add(checkbox);
                 }
-
-                var feelingsHeight = rowSize + betweenFeelingRows + rowNumber * rowSize;
+                
+                var rowsPerCategory = (int)Math.Ceiling(category.Items.Count / (decimal) maxFeelingsPerRow);
+                var feelingsHeight = rowHeight + betweenFeelingRows + rowsPerCategory * rowHeight;
 
                 groupBox.Size = new Size(size.Width - 2, feelingsHeight);
 

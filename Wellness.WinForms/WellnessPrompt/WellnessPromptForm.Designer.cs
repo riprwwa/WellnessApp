@@ -121,7 +121,7 @@ namespace Wellness.WinForms.WellnessPrompt
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(699, 616);
+            this.ClientSize = new System.Drawing.Size(715, 616);
             this.Controls.Add(this.pnlFeelings);
             this.Controls.Add(this.grpBoxMisc);
             this.Controls.Add(this.grpBoxDoing);
